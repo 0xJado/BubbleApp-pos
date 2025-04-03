@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    Size="500,280"
+    x:Class="BubbleAppNew.CreatedMomentPage.CreateMomentPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <VerticalStackLayout
+        BackgroundColor="Wheat"
+        Padding="30"
+        Spacing="25">
+        <Label
+            FontAttributes="Bold"
+            FontSize="24"
+            HorizontalOptions="Center"
+            Text="Create Your Own Moment" />
+
+        <Entry
+            BackgroundColor="GhostWhite"
+            FontSize="18"
+            Placeholder="Item Name"
+            x:Name="NameEntry" />
+
+        <Entry
+            BackgroundColor="GhostWhite"
+            FontSize="18"
+            Keyboard="Numeric"
+            Placeholder="Price (€)"
+            x:Name="PriceEntry" />
+
+        <Button
+            BackgroundColor="DarkRed"
+            Clicked="OnAddClicked"
+            CornerRadius="18"
+            FontSize="18"
+            Padding="12,8"
+            Text="Hinzufügen" />
+
+    </VerticalStackLayout>
+</toolkit:Popup>

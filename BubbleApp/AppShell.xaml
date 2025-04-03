@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    Title="Waffle Moments"
+    x:Class="BubbleAppNew.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:mainPage="clr-namespace:BubbleAppNew.MainPage"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <FlyoutItem Title="Main Menu">
+        <ShellContent ContentTemplate="{DataTemplate mainPage:MainPage}" />
+    </FlyoutItem>
+
+</Shell>
