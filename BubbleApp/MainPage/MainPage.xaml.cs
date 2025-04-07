@@ -1,22 +1,18 @@
-﻿using BubbleApp.OrderSummaryPage;
-using BubbleAppNew.CreatedMomentPage;
-using BubbleAppNew.OrderConfirmationPage;
-using CommunityToolkit.Maui.Views;
+﻿using BubbleAppNew.CreatedMomentPage;
 using BubbleLib.Models;
-using Microsoft.Maui.Controls;
-
+using CommunityToolkit.Maui.Views;
 
 namespace BubbleAppNew.MainPage;
 
-public partial class MainPage : ContentPage
+public partial class MainPage
 {
-    private readonly BubbleWaffleViewModel vm;
+    private readonly BubbleWaffleViewModel _vm;
 
     public MainPage(BubbleWaffleViewModel viewModel)
     {
         InitializeComponent();
-        vm = viewModel;
-        BindingContext = vm;
+        _vm = viewModel;
+        BindingContext = _vm;
     }
 
     private void OnCreateMomentClicked(object sender, EventArgs e)
@@ -25,31 +21,9 @@ public partial class MainPage : ContentPage
 
         popup.MomentCreated += customOrder =>
         {
-            vm.AddWaffleToOrder(customOrder);
+            _vm.AddWaffleToOrder(customOrder);
         };
-        
+
         this.ShowPopup(popup);
-    }
-
-    private async void OnGenerateQrCodeClicked(object sender, EventArgs e)
-    {
-        decimal solanaRate = await _coinGeckoService.GetSolanaEuroExchangeRateAsync();
-        
-        var orderedItems = _waffleService.OrderedItems.ToList();
-        var euroPrice = _waffleService.GetTotalPrice();
-        var storeWalletAddress = "0x1234567890abcdef1234567890abcdef12345678"; // Replace with actual wallet address
-        
-        var ocvm = new OrderConfirmationViewModel(
-            orderedItems,
-            euroPrice,
-            solanaRate,
-            storeWalletAddress);
-
-        var orderConfirmationPage = new OrderConfirmationPage
-        {
-            BindingContext = ocvm
-        };
-
-        await Navigation.PushAsync(orderConfirmationPage);
     }
 }

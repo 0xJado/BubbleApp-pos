@@ -1,4 +1,5 @@
-﻿using static Microsoft.Maui.Controls.Routing;
+﻿using BubbleAppNew.OrderConfirmationPage;
+using static Microsoft.Maui.Controls.Routing;
 
 namespace BubbleAppNew;
 
@@ -6,7 +7,7 @@ public partial class AppShell : Shell
 {
     public AppShell()
     {
-        Routing.RegisterRoute(nameof(OrderConfirmationPage), typeof(OrderConfirmationPage));
+        Routing.RegisterRoute(nameof(OrderPage), typeof(OrderPage));
 
         InitializeComponent();
     }

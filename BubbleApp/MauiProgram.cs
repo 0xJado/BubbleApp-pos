@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using BubbleAppNew.OrderSummaryPage;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using BubbleLib;
@@ -7,6 +6,7 @@ using BubbleWaffleViewModel = BubbleAppNew.MainPage.BubbleWaffleViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using BubbleAppNew.BubbleLib;
+using BubbleAppNew.OrderConfirmationPage;
 using BubbleLib.Services;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
@@ -27,14 +27,16 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        builder.Services.AddSingleton<IWaffleService, WaffleService>();
+        builder.Services.AddSingleton<App>();
         builder.Services.AddSingleton<MainPage.MainPage>();
         builder.Services.AddTransient<BubbleWaffleViewModel>();
-        builder.Services.AddSingleton<OrderViewModel>();
+        builder.Services.AddSingleton<OrderConfirmationViewModel>();
+        builder.Services.AddSingleton<IWaffleService, WaffleService>();
         builder.Services.AddHttpClient<ICoinGeckoService, CoinGeckoService>();
         builder.Services.AddSingleton<IQrCodeService, QrCodeService>();
         
-        return builder.Build();
+        var app = builder.Build();
+        return app;
     }
     
 }
