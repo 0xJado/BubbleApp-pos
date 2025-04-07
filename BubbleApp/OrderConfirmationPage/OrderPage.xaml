@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage
-    BackgroundColor="White"
+    BackgroundColor="Wheat"
     Title="Review and Pay"
     x:Class="BubbleAppNew.OrderConfirmationPage.OrderPage"
     x:DataType="orderConfirmationPage:OrderConfirmationViewModel"
@@ -12,14 +10,14 @@
 
     <Grid Padding="20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="0.55*" />
+            <ColumnDefinition Width="0.45*" />
         </Grid.ColumnDefinitions>
 
-        <!--  Left: Order Summary  -->
+        <!--  Left Column: Order Summary  -->
         <VerticalStackLayout
             Grid.Column="0"
-            Padding="10"
+            Padding="15"
             Spacing="15"
             VerticalOptions="Start">
 
@@ -27,56 +25,63 @@
                 FontAttributes="Bold"
                 FontSize="24"
                 HorizontalOptions="Start"
-                Text="Order Summary" />
+                Text="Bestellung"
+                TextColor="Black" />
 
             <Label
                 FontSize="12"
                 Text="{Binding OrderId, StringFormat='Order ID: {0}'}"
                 TextColor="Gray" />
 
-            <CollectionView HeightRequest="300" ItemsSource="{Binding OrderedItems}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:BubbleWaffle">
-                        <StackLayout
-                            Orientation="Horizontal"
-                            Padding="5"
-                            Spacing="10">
+            <Frame
+                BackgroundColor="White"
+                BorderColor="#CCCCCC"
+                CornerRadius="12"
+                HasShadow="True"
+                Padding="10">
 
-                            <Label
-                                FontSize="18"
-                                Text="{Binding WaffleName}"
-                                WidthRequest="350" />
-                            <Label
-                                FontSize="18"
-                                Text="{Binding WafflePrice, StringFormat='€ {0:F2}'}"
-                                TextColor="DarkGreen" />
-                        </StackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <CollectionView HeightRequest="300" ItemsSource="{Binding OrderedItems}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:BubbleWaffle">
+                            <Grid ColumnDefinitions="*,Auto" Padding="5,2">
+                                <Label
+                                    FontSize="18"
+                                    Grid.Column="0"
+                                    Text="{Binding WaffleName}"
+                                    TextColor="Black" />
+                                <Label
+                                    FontSize="18"
+                                    Grid.Column="1"
+                                    Text="{Binding WafflePrice, StringFormat='€ {0:F2}'}"
+                                    TextColor="DarkGreen" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Frame>
 
             <Label
                 FontAttributes="Bold"
                 FontSize="20"
                 HorizontalOptions="Start"
-                Text="{Binding EuroPrice, StringFormat='Total: € {0:F2}'}"
+                Text="{Binding EuroPrice, StringFormat='Gesamtsumme: € {0:F2}'}"
                 TextColor="Black" />
 
             <Label
-                FontAttributes="Bold"
                 FontSize="18"
                 HorizontalOptions="Start"
-                Text="{Binding SolanaRate, StringFormat='Current Rate: 1 SOL/€ {0:F2}'}"
-                TextColor="DarkGray" />
+                Text="{Binding SolanaRate, StringFormat='Aktueller Kurs: 1 SOL = €{0:F2}'}"
+                TextColor="Gray" />
 
             <Label
-                FontSize="24"
+                FontAttributes="Bold"
+                FontSize="22"
                 HorizontalOptions="Start"
-                Text="{Binding TotalSol, StringFormat='Final Price: {0:F3} SOL'}"
+                Text="{Binding TotalSol, StringFormat='Zu bezahlen: {0:F3} SOL'}"
                 TextColor="DarkGreen" />
         </VerticalStackLayout>
 
-        <!--  Right: QR Code and Payment Info  -->
+        <!--  Right Column: QR Code  -->
         <VerticalStackLayout
             Grid.Column="1"
             HorizontalOptions="Center"
@@ -88,33 +93,31 @@
                 FontAttributes="Bold, Italic"
                 FontSize="22"
                 HorizontalOptions="Center"
-                Text="Scan to Pay" />
+                Text="Scannen zum Bezahlen" />
 
             <Frame
                 BackgroundColor="White"
-                BorderColor="DarkGray"
+                BorderColor="#888888"
                 CornerRadius="10"
                 HasShadow="True"
-                HeightRequest="260"
+                HeightRequest="520"
                 HorizontalOptions="Center"
                 Padding="5"
-                VerticalOptions="Center"
-                WidthRequest="260">
+                WidthRequest="520">
 
                 <Image
                     Aspect="AspectFit"
                     BackgroundColor="LightGray"
-                    HeightRequest="250"
+                    HeightRequest="500"
                     Source="{Binding QrCodeImage}"
-                    WidthRequest="250" />
+                    WidthRequest="500" />
             </Frame>
 
             <Label
-                FontSize="14"
+                FontSize="18"
                 HorizontalOptions="Center"
-                Text="{Binding ShortWalletAddress, StringFormat='To: {0}'}"
+                Text="{Binding ShortWalletAddress, StringFormat='Wallet: {0}'}"
                 TextColor="Gray" />
-
         </VerticalStackLayout>
     </Grid>
 </ContentPage>
