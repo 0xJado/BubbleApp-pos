@@ -92,4 +92,8 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BubbleLib\BubbleLib.csproj" />
+    </ItemGroup>
+
 </Project>

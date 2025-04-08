@@ -6,7 +6,7 @@
     x:Name="RootPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:mainPage="clr-namespace:BubbleAppNew.MainPage"
-    xmlns:models="clr-namespace:BubbleLib.Models"
+    xmlns:models="clr-namespace:BubbleLib.Models;assembly=BubbleLib"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Grid Padding="20">

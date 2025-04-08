@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleAppNew", "BubbleAppNew.csproj", "{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleApp", "BubbleApp\BubbleApp.csproj", "{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleLib", "BubbleLib\BubbleLib.csproj", "{FE5DA4F4-6FAA-41C1-82AD-3123D96CE256}"
 EndProject
