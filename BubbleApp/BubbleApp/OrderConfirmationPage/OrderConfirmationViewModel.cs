@@ -1,69 +1,44 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls;
 using BubbleAppNew.BubbleLib;
 using BubbleLib.Models;
 
 namespace BubbleAppNew.OrderConfirmationPage;
 
-public class OrderConfirmationViewModel : INotifyPropertyChanged
+public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttributable
 {
-    public ObservableCollection<BubbleWaffle> OrderedItems { get; set; }
-
-    private string _storeWalletAddress;
-    public string StoreWalletAddress
-    {
-        get => _storeWalletAddress;
-        set
-        {
-            _storeWalletAddress = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(ShortWalletAddress));
-        }
-    }
-
+    [ObservableProperty] 
+    private bool _isWaitingForPayment;
+    [ObservableProperty] 
+    private bool _paymentConfirmed;
+    [ObservableProperty] 
+    private bool _paymentTimedOut;
+    
+    [ObservableProperty] 
+    private ObservableCollection<BubbleWaffle> _orderedItems;
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalSol))]
     private decimal _euroPrice;
-    public decimal EuroPrice
-    {
-        get => _euroPrice;
-        set
-        {
-            _euroPrice = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TotalSol));
-        }
-    }
-
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalSol))]
     private decimal _solanaRate;
-    public decimal SolanaRate
-    {
-        get => _solanaRate;
-        set
-        {
-            _solanaRate = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TotalSol));
-        }
-    }
-
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShortWalletAddress))]
+    private string _storeWalletAddress;
+    
+    [ObservableProperty] 
+    private ImageSource _qrCodeImage;
     public decimal TotalSol => Math.Round(EuroPrice / SolanaRate, 3);
 
     public string ShortWalletAddress =>
         string.IsNullOrWhiteSpace(StoreWalletAddress)
             ? string.Empty
             : $"{StoreWalletAddress[..6]}...{StoreWalletAddress[^4..]}";
-
-    private ImageSource _qrCodeImage;
-    public ImageSource QrCodeImage
-    {
-        get => _qrCodeImage;
-        set
-        {
-            _qrCodeImage = value;
-            OnPropertyChanged();
-        }
-    }
 
     public string OrderId { get; }
 
@@ -84,11 +59,20 @@ public class OrderConfirmationViewModel : INotifyPropertyChanged
     {
         if (string.IsNullOrWhiteSpace(StoreWalletAddress) || TotalSol <= 0)
             return;
+
         try
         {
-            var solUri = $"solana:{StoreWalletAddress}?amount={TotalSol}";
+            var encodedLabel = Uri.EscapeDataString("WaffleMoments");
+            var encodedMemo = Uri.EscapeDataString($"Order-{OrderId}");
+            var encodedMsg = Uri.EscapeDataString("Vielen Dank für Ihre Bestellung!");
+            
+            var solUri =
+                $"solana:{StoreWalletAddress}?amount={TotalSol.ToString(CultureInfo.InvariantCulture)}&label={encodedLabel}&memo={encodedMemo}&message={encodedMsg}";
+            
             QrCodeImage = await Task.Run(() => qrCodeService.GenerateQrCode(solUri));
-            Console.WriteLine("Generated QR Code successfully generated");
+            Console.WriteLine("QR Code generated.");
+            Console.WriteLine($"Final QR Payload: solana:{StoreWalletAddress}?amount={TotalSol.ToString(CultureInfo.InvariantCulture)}&label={encodedLabel}&memo={encodedMemo}&message={encodedMsg}");
+            
         }
         catch (Exception ex)
         {
@@ -96,10 +80,27 @@ public class OrderConfirmationViewModel : INotifyPropertyChanged
         }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public async void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        IsWaitingForPayment = true;
+
+        try
+        {
+            var tracker = new TxnTracker();
+            var success = await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, TimeSpan.FromMinutes(3));
+
+            if (success)
+                PaymentConfirmed = true;
+            else
+                PaymentTimedOut = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error tracking payment: {ex.Message}");
+        }
+        finally
+        {
+            IsWaitingForPayment = false;
+        }
     }
 }

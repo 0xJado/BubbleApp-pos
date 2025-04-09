@@ -1,5 +1,4 @@
 ﻿using BubbleAppNew.OrderConfirmationPage;
-using static Microsoft.Maui.Controls.Routing;
 
 namespace BubbleAppNew;
 

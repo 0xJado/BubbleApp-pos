@@ -53,7 +53,6 @@ public partial class BubbleWaffleViewModel : ObservableObject
     private async Task GenerateQrCodeAsync()
     {
         Console.WriteLine("---> QR Code Generation Clicked");
-        //Get the latest Solana rate from CoinGecko
         var solanaRate = await _coinGeckoService.GetSolanaEuroExchangeRateAsync();
         Console.WriteLine($"---> Solana Rate: {solanaRate}");
 
@@ -63,23 +62,21 @@ public partial class BubbleWaffleViewModel : ObservableObject
         var euroPrice = _waffleService.GetTotalPrice();
         Console.WriteLine($"---> Euro Price: {euroPrice}");
 
-        var storeWalletAddress = "0x1234567890abcdef1234567890abcdef12345678"; // Replace with actual wallet address
-       
+        var storeWalletAddress = "AvgjRNHhKgZ6pb5AxeqBdCDiZY1Rh9yUnCTh464oA4Cn";
+
         var ocvm = new OrderConfirmationViewModel(
-            new ObservableCollection<BubbleWaffle>(orderedItems),
+            orderedItems,
             euroPrice,
             solanaRate,
-            storeWalletAddress);
+            storeWalletAddress
+        );
         
+        await Shell.Current.GoToAsync($"{nameof(OrderPage)}", true,
+            new Dictionary<string, object>
+            {
+                [nameof(OrderConfirmationViewModel)] = ocvm
+            });
 
-        await ocvm.GenerateQrCodeAsync(_qrCodeService);     
-        Console.WriteLine("---> QR Code Generated");
-
-        await Shell.Current.GoToAsync(nameof(OrderPage), true, new Dictionary<string, object>
-        {
-            { "OrderConfirmationViewModel", ocvm }
-        });
-        
         Console.WriteLine("---> OrderPage Navigation Completed");
     }
 }
