@@ -4,7 +4,7 @@
     x:Class="BubbleAppNew.OrderConfirmationPage.OrderPage"
     x:DataType="orderConfirmationPage:OrderConfirmationViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:models="clr-namespace:BubbleLib.Models;assembly=BubbleLib"
+    xmlns:bubbleLib="clr-namespace:BubbleLib;assembly=BubbleLib"
     xmlns:orderConfirmationPage="clr-namespace:BubbleAppNew.OrderConfirmationPage"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <Grid>
@@ -42,17 +42,23 @@
 
                     <CollectionView HeightRequest="300" ItemsSource="{Binding OrderedItems}">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="models:BubbleWaffle">
-                                <Grid ColumnDefinitions="*,Auto" Padding="5,2">
+                            <DataTemplate x:DataType="bubbleLib:BubbleWaffle">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Padding="5,2">
                                     <Label
-                                        FontSize="18"
+                                        FontSize="22"
                                         Grid.Column="0"
+                                        Padding="8,0"
+                                        Text="{Binding Quantity, StringFormat='{0}x'}"
+                                        TextColor="Black" />
+                                    <Label
+                                        FontSize="22"
+                                        Grid.Column="1"
                                         Text="{Binding WaffleName}"
                                         TextColor="Black" />
                                     <Label
-                                        FontSize="18"
-                                        Grid.Column="1"
-                                        Text="{Binding WafflePrice, StringFormat='€ {0:F2}'}"
+                                        FontSize="22"
+                                        Grid.Column="2"
+                                        Text="{Binding TotalPrice, StringFormat='€ {0:F2}'}"
                                         TextColor="DarkGreen" />
                                 </Grid>
                             </DataTemplate>
@@ -62,20 +68,20 @@
 
                 <Label
                     FontAttributes="Bold"
-                    FontSize="20"
+                    FontSize="24"
                     HorizontalOptions="Start"
                     Text="{Binding EuroPrice, StringFormat='Gesamtsumme: € {0:F2}'}"
                     TextColor="Black" />
 
                 <Label
-                    FontSize="18"
+                    FontSize="22"
                     HorizontalOptions="Start"
                     Text="{Binding SolanaRate, StringFormat='Aktueller Kurs: 1 SOL = €{0:F2}'}"
                     TextColor="Gray" />
 
                 <Label
                     FontAttributes="Bold"
-                    FontSize="22"
+                    FontSize="26"
                     HorizontalOptions="Start"
                     Text="{Binding TotalSol, StringFormat='Zu bezahlen: {0:F3} SOL'}"
                     TextColor="DarkGreen" />
@@ -91,7 +97,7 @@
 
                 <Label
                     FontAttributes="Bold, Italic"
-                    FontSize="22"
+                    FontSize="26"
                     HorizontalOptions="Center"
                     Text="Scannen zum Bezahlen" />
 
@@ -114,7 +120,7 @@
                 </Frame>
 
                 <Label
-                    FontSize="18"
+                    FontSize="22"
                     HorizontalOptions="Center"
                     Text="{Binding ShortWalletAddress, StringFormat='Wallet: {0}'}"
                     TextColor="Gray" />
@@ -135,12 +141,12 @@
             <!--  Logo  -->
             <Image
                 Grid.Column="0"
-                HeightRequest="80"
+                HeightRequest="90"
                 HorizontalOptions="Start"
                 Margin="20,0,0,0"
                 Source="waffle_moments_logo.png"
                 VerticalOptions="Center"
-                WidthRequest="80" />
+                WidthRequest="90" />
 
             <!--  Status Frame  -->
             <Frame
@@ -152,7 +158,7 @@
                 Padding="10,5">
                 <Label
                     FontAttributes="Italic"
-                    FontSize="14"
+                    FontSize="16"
                     Text="Zahlung wird erwartet..."
                     TextColor="IndianRed" />
             </Frame>
@@ -167,7 +173,7 @@
                 Padding="10,5">
                 <Label
                     FontAttributes="Bold"
-                    FontSize="18"
+                    FontSize="20"
                     Text="Zahlung bestätigt!"
                     TextColor="Green" />
             </Frame>
@@ -183,7 +189,7 @@
                 Padding="10,5">
                 <Label
                     FontAttributes="Bold"
-                    FontSize="14"
+                    FontSize="20"
                     Text="Keine Zahlung empfangen."
                     TextColor="Red" />
             </Frame>

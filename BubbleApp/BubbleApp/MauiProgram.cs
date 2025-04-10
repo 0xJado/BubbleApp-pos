@@ -1,10 +1,8 @@
-﻿using BubbleAppNew.BubbleLib;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using BubbleWaffleViewModel = BubbleAppNew.MainPage.BubbleWaffleViewModel;
 using BubbleAppNew.OrderConfirmationPage;
 using BubbleLib;
-using BubbleLib.Services;
 
 namespace BubbleAppNew;
 public static class MauiProgram
@@ -29,6 +27,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<IWaffleService, WaffleService>();
         builder.Services.AddHttpClient<ICoinGeckoService, CoinGeckoService>();
         builder.Services.AddSingleton<IQrCodeService, QrCodeService>();
+        builder.Services.AddSingleton<IOrderStorageService>(s =>
+        {
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "wafflemoments_orders.db3");
+            return new OrderStorageService(dbPath);
+        });
+
         
         return builder.Build();
     }

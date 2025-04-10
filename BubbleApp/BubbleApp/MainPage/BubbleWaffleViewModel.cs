@@ -1,9 +1,6 @@
 using System.Collections.ObjectModel;
-using BubbleAppNew.BubbleLib;
 using BubbleAppNew.OrderConfirmationPage;
 using BubbleLib;
-using BubbleLib.Models;
-using BubbleLib.Services;
 
 namespace BubbleAppNew.MainPage;
 

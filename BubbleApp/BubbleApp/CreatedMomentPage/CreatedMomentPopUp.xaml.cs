@@ -1,4 +1,4 @@
-using BubbleLib.Models;
+using BubbleLib;
 using CommunityToolkit.Maui.Views;
 
 namespace BubbleAppNew.CreatedMomentPage;

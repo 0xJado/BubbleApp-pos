@@ -1,4 +1,4 @@
-using BubbleAppNew.BubbleLib;
+using BubbleLib;
 using Microsoft.Maui;
 
 namespace BubbleAppNew.OrderConfirmationPage;

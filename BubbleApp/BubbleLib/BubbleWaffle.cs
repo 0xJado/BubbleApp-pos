@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace BubbleLib.Models;
+namespace BubbleLib;
 
 public partial class BubbleWaffle : ObservableObject
 {

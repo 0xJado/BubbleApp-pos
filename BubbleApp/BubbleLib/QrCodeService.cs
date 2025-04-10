@@ -1,9 +1,9 @@
 using System;
+using System.IO;
 using Microsoft.Maui.Controls;
 using QRCoder;
-using System.IO;
 
-namespace BubbleAppNew.BubbleLib;
+namespace BubbleLib;
 
 public interface IQrCodeService
 {

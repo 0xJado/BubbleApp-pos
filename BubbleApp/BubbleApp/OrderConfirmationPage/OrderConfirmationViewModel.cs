@@ -3,7 +3,6 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls;
 using BubbleLib;
-using BubbleLib.Models;
 
 namespace BubbleAppNew.OrderConfirmationPage;
 
