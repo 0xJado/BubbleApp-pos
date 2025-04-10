@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls;
-using BubbleAppNew.BubbleLib;
+using BubbleLib;
 using BubbleLib.Models;
 
 namespace BubbleAppNew.OrderConfirmationPage;
@@ -64,7 +64,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         {
             var encodedLabel = Uri.EscapeDataString("WaffleMoments");
             var encodedMemo = Uri.EscapeDataString($"Order-{OrderId}");
-            var encodedMsg = Uri.EscapeDataString("Vielen Dank für Ihre Bestellung!");
+            var encodedMsg = Uri.EscapeDataString("Vielen Dank!");
             
             var solUri =
                 $"solana:{StoreWalletAddress}?amount={TotalSol.ToString(CultureInfo.InvariantCulture)}&label={encodedLabel}&memo={encodedMemo}&message={encodedMsg}";
@@ -82,12 +82,13 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
 
     public async void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        Console.WriteLine("Applying query attributes.");
         IsWaitingForPayment = true;
 
         try
         {
             var tracker = new TxnTracker();
-            var success = await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, TimeSpan.FromMinutes(3));
+            var success = await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId,TimeSpan.FromMinutes(3));
 
             if (success)
                 PaymentConfirmed = true;

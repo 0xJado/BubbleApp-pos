@@ -1,66 +1,84 @@
 using Solnet.Rpc;
+using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System.Diagnostics;
-using BubbleAppNew.BubbleLib;
 
 namespace BubbleAppNew;
 
 public class TxnTracker
 {
     private readonly IRpcClient _rpcClient;
-        
-        public TxnTracker()
-        {
-            //Comment out the one you don't need
-            //Uses the devnet endpoint
-            _rpcClient = ClientFactory.GetClient(Cluster.DevNet);
-            // Uses the mainnet endpoint
-            //_rpcClient = ClientFactory.GetClient(Cluster.MainNet);
-        }
 
-        public async Task<bool> WaitForPaymentAsync(string walletAddress, decimal expectedSol, TimeSpan timeout)
+    public TxnTracker()
+    {
+        //Comment out the one you don't need
+        //Uses the devnet endpoint
+        _rpcClient = ClientFactory.GetClient(Cluster.DevNet);
+        //Uses the mainnet endpoint
+        //_rpcClient = ClientFactory.GetClient(Cluster.MainNet);
+    }
+
+    public async Task<bool> WaitForPaymentAsync(string walletAddress, decimal expectedSol, string orderId, TimeSpan timeout)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var expectedMemo = $"Order-{orderId}";
+        ulong expectedLamports = (ulong)(expectedSol * 1_000_000_000m);
+
+        Console.WriteLine($"Waiting for payment: {expectedSol} SOL with memo '{expectedMemo}'");
+
+        while (stopwatch.Elapsed < timeout)
         {
-            var stopwatch = Stopwatch.StartNew();
-            ulong lamportsThreshold = (ulong)((expectedSol - 0.001m) * 1_000_000_000); // Convert SOL to lamports with wiggleroom
-            
-            Console.WriteLine($"Waiting for {expectedSol} SOL to reach wallet {walletAddress}");
-           
-            while (stopwatch.Elapsed < timeout)
+            var sigResult = await _rpcClient.GetSignaturesForAddressAsync(walletAddress, limit: 10);
+
+            if (sigResult.WasSuccessful && sigResult.Result?.Count > 0)
             {
-                var txs = await _rpcClient.GetSignaturesForAddressAsync(walletAddress, limit : 10);
-                
-                if (txs.WasSuccessful && txs.Result is { Count: > 0 })
+                foreach (var sigInfo in sigResult.Result)
                 {
-                    foreach (var txSig in txs.Result)
+                    var tx = await _rpcClient.GetTransactionAsync(sigInfo.Signature, Commitment.Finalized);
+                    if (!tx.WasSuccessful || tx.Result?.Transaction == null || tx.Result.Meta?.Error != null)
+                        continue;
+
+                    bool memoMatch = false;
+
+                    //Look inside LogMessages
+                    var logs = tx.Result.Meta?.LogMessages;
+                    if (logs != null)
                     {
-                        var tx = await _rpcClient.GetTransactionAsync(txSig.Signature);
-
-                        if (tx.WasSuccessful && 
-                            tx.Result?.Meta?.PreBalances != null &&
-                            tx.Result?.Meta?.PostBalances != null &&
-                            tx.Result.Transaction?.Message?.AccountKeys != null)
+                        foreach (var log in logs)
                         {
-                            int index = Array.IndexOf(tx.Result.Transaction.Message.AccountKeys, walletAddress);
-                            if (index == -1)
-                                continue;
-                            
-                            var pre = tx.Result.Meta.PreBalances[index];
-                            var post = tx.Result.Meta.PostBalances[index];
-                            
-                            var delta = post - pre;
-
-                            if (delta >= lamportsThreshold)
+                            if (log.Contains(expectedMemo, StringComparison.OrdinalIgnoreCase))
                             {
-                                Console.WriteLine($"Payment detected! Tx: {txSig.Signature} | Amount: {delta} lamports");
-                                return true;
+                                memoMatch = true;
+                                Console.WriteLine($"Found memo in logs: {log}");
+                                break;
                             }
                         }
                     }
-                }
 
-                await Task.Delay(4000); // Checks every 4 seconds
+                    if (!memoMatch) continue;
+
+                    //Validate amount received
+                    var accountIndex = Array.IndexOf(tx.Result.Transaction.Message.AccountKeys, walletAddress);
+                    if (accountIndex == -1) continue;
+
+                    var pre = tx.Result.Meta.PreBalances[accountIndex];
+                    var post = tx.Result.Meta.PostBalances[accountIndex];
+                    var delta = post - pre;
+
+                    Console.WriteLine($"Delta received: {delta} lamports (expected: {expectedLamports})");
+
+                    if ((ulong)delta >= expectedLamports)
+                    {
+                        Console.WriteLine($"Payment confirmed for Order-{orderId}! Tx: {sigInfo.Signature}");
+                        return true;
+                    }
+                }
             }
-            Console.WriteLine("Payment not found within timeout period.");
-            return false;
+
+            await Task.Delay(2000);
         }
+
+        Console.WriteLine("Payment not detected within timeout.");
+        return false;
+    }
 }
