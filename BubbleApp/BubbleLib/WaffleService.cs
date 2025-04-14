@@ -12,6 +12,7 @@ public interface IWaffleService
     void RemoveWaffleFromOrder(BubbleWaffle waffle);
     decimal GetWafflePrice(); 
     decimal GetTotalPrice();
+    void ClearOrder();
 }
 
 public class WaffleService : IWaffleService
@@ -27,6 +28,11 @@ public class WaffleService : IWaffleService
         new BubbleWaffle { WaffleName = "Schlumpf Moment" },
         new BubbleWaffle { WaffleName = "Kids Moment" }
     };
+
+    public void ClearOrder()
+    {
+        OrderedItems.Clear();
+    }
     
     public ObservableCollection<BubbleWaffle> OrderedItems { get; } = new();
     

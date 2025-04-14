@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    Title="Bestellverlauf"
+    x:Class="BubbleAppNew.OrderHistory.OrderHistoryPage"
+    x:DataType="local:OrderHistoryViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bubbleLib="clr-namespace:BubbleLib;assembly=BubbleLib"
+    xmlns:local="clr-namespace:BubbleAppNew.OrderHistory"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <CollectionView ItemsSource="{Binding Orders}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="bubbleLib:CompletedOrder">
+                <Frame
+                    BackgroundColor="White"
+                    BorderColor="Gray"
+                    CornerRadius="8"
+                    HasShadow="True"
+                    Margin="10"
+                    Padding="10">
+                    <VerticalStackLayout Spacing="5">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="{Binding OrderId, StringFormat='Bestell-ID: {0}'}" />
+                        <Label FontSize="16" Text="{Binding ItemsSummary}" />
+                        <Label FontSize="16" Text="{Binding TotalEur, StringFormat='Gesamtsumme in EUR: {0:F2}'}" />
+                        <Label FontSize="16" Text="{Binding TotalSol, StringFormat='Gesamt in SOL: {0:F3}'}" />
+                        <Label
+                            FontSize="14"
+                            Text="{Binding Timestamp, StringFormat='Datum: {0:dd.MM.yyyy HH:mm}'}"
+                            TextColor="Gray" />
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>

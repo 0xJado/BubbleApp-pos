@@ -7,6 +7,15 @@
     xmlns:bubbleLib="clr-namespace:BubbleLib;assembly=BubbleLib"
     xmlns:orderConfirmationPage="clr-namespace:BubbleAppNew.OrderConfirmationPage"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding NewTransactionCommand}"
+            Order="Primary"
+            Priority="0"
+            Text="Neue Bestellung" />
+    </ContentPage.ToolbarItems>
+
     <Grid>
         <Grid Padding="20">
             <Grid.ColumnDefinitions>

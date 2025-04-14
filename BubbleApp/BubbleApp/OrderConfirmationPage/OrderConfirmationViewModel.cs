@@ -41,17 +41,41 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
 
     public string OrderId { get; }
 
+    [ObservableProperty] private string _emailAddress;
+    
+    [RelayCommand]
+    private async Task NewTransactionAsync()
+    {
+        _waffleService.ClearOrder();
+        EmailAddress = string.Empty;
+
+        await Shell.Current.GoToAsync(".."); // Navigates back to MainPage
+    }
+
+    
+    private readonly IOrderStorageService _orderStorageService;
+    private readonly IWaffleService _waffleService;
+    private readonly IEmailService _emailService;
+
     public OrderConfirmationViewModel(
         ObservableCollection<BubbleWaffle> orderedItems,
         decimal euroPrice,
         decimal solanaRate,
-        string storeWalletAddress)
+        string storeWalletAddress,
+        IOrderStorageService orderStorageService,
+        IWaffleService waffleService,
+        IEmailService emailService
+        )
     {
         OrderedItems = orderedItems;
         EuroPrice = euroPrice;
         SolanaRate = solanaRate;
         StoreWalletAddress = storeWalletAddress;
         OrderId = Guid.NewGuid().ToString().Split('-')[0];
+        
+        _orderStorageService = orderStorageService;
+        _waffleService = waffleService;
+        _emailService = emailService;
     }
 
     public async Task GenerateQrCodeAsync(IQrCodeService qrCodeService)
@@ -87,12 +111,61 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         try
         {
             var tracker = new TxnTracker();
-            var success = await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId,TimeSpan.FromMinutes(3));
+            var success = 
+                await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId, TimeSpan.FromMinutes(3));
 
             if (success)
+            {
                 PaymentConfirmed = true;
+
+                string userEmail = null;
+
+                bool wantsEmail = await Shell.Current.DisplayAlert(
+                    "Zahlung erfolgreich",
+                    "Möchten Sie eine Quittung per E-Mail erhalten?",
+                    "Ja", "Nein");
+
+                if (wantsEmail)
+                {
+                    userEmail = await Shell.Current.DisplayPromptAsync(
+                        "E-Mail eingeben",
+                        "Bitte geben Sie Ihre E-Mail-Adresse ein:");
+
+                    Console.WriteLine($"E-Mail-Adresse für Quittung: {userEmail}");
+                }
+
+                var completedOrder = new CompletedOrder
+                {
+                    OrderId = OrderId,
+                    ItemsSummary = string.Join(", ", OrderedItems.Select(x => $"{x.Quantity}x {x.WaffleName}")),
+                    TotalEur = EuroPrice,
+                    TotalSol = TotalSol,
+                    Wallet = StoreWalletAddress,
+                    Timestamp = DateTime.Now
+                };
+
+                await _orderStorageService.SaveOrderAsync(completedOrder);
+
+                // Send Email AFTER storing
+                if (!string.IsNullOrWhiteSpace(userEmail))
+                
+                {
+                    try
+                    {
+                        await _emailService.SendReceiptAsync(userEmail, completedOrder, OrderedItems.ToList());
+                        Console.WriteLine($"📬 Quittung an {userEmail} gesendet");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Fehler beim E-Mail-Versand: {ex.Message}");
+                        await Shell.Current.DisplayAlert("Fehler", "Die Quittung konnte nicht gesendet werden.", "OK");
+                    }
+                }
+            }
             else
+            {
                 PaymentTimedOut = true;
+            }
         }
         catch (Exception ex)
         {

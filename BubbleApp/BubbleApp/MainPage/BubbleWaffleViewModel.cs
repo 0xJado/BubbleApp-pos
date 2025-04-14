@@ -9,6 +9,8 @@ public partial class BubbleWaffleViewModel : ObservableObject
     private readonly IWaffleService _waffleService;
     private readonly ICoinGeckoService _coinGeckoService;
     private readonly IQrCodeService _qrCodeService;
+    private readonly IOrderStorageService _orderStorageService;
+    private readonly IEmailService _emailService;
 
     public ObservableCollection<BubbleWaffle> WaffleMenu => _waffleService.WaffleMenu;
     public ObservableCollection<BubbleWaffle> OrderedItems => _waffleService.OrderedItems;
@@ -16,11 +18,14 @@ public partial class BubbleWaffleViewModel : ObservableObject
     [ObservableProperty] private decimal totalPrice;
     [ObservableProperty] private decimal solanaPrice;
 
-    public BubbleWaffleViewModel(IWaffleService waffleService, ICoinGeckoService coinGeckoService, IQrCodeService qrCodeService)
+    public BubbleWaffleViewModel(IWaffleService waffleService, ICoinGeckoService coinGeckoService, IQrCodeService qrCodeService, IOrderStorageService orderStorageService, IEmailService emailService)
     {
         _waffleService = waffleService ?? throw new ArgumentNullException(nameof(waffleService), "Der WaffleService darf nicht null sein.");
         _coinGeckoService = coinGeckoService ?? throw new ArgumentNullException(nameof(coinGeckoService));
         _qrCodeService = qrCodeService ?? throw new ArgumentNullException(nameof(qrCodeService));
+        _orderStorageService = orderStorageService ?? throw new ArgumentNullException(nameof(orderStorageService));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+        
         UpdatePricesAsync();
     }
 
@@ -65,7 +70,10 @@ public partial class BubbleWaffleViewModel : ObservableObject
             orderedItems,
             euroPrice,
             solanaRate,
-            storeWalletAddress
+            storeWalletAddress,
+            _orderStorageService,
+            _waffleService,
+            _emailService
         );
         
         await Shell.Current.GoToAsync($"{nameof(OrderPage)}", true,
