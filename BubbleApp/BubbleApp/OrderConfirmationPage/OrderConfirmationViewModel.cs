@@ -1,37 +1,27 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Maui.Controls;
 using BubbleLib;
 
 namespace BubbleAppNew.OrderConfirmationPage;
 
 public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttributable
 {
-    [ObservableProperty] 
-    private bool _isWaitingForPayment;
-    [ObservableProperty] 
-    private bool _paymentConfirmed;
-    [ObservableProperty] 
-    private bool _paymentTimedOut;
-    
-    [ObservableProperty] 
-    private ObservableCollection<BubbleWaffle> _orderedItems;
-    
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotalSol))]
+    [ObservableProperty] private bool _isWaitingForPayment;
+    [ObservableProperty] private bool _paymentConfirmed;
+    [ObservableProperty] private bool _paymentTimedOut;
+
+    [ObservableProperty] private ObservableCollection<BubbleWaffle> _orderedItems;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))]
     private decimal _euroPrice;
-    
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(TotalSol))]
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))]
     private decimal _solanaRate;
-    
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShortWalletAddress))]
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShortWalletAddress))]
     private string _storeWalletAddress;
-    
-    [ObservableProperty] 
-    private ImageSource _qrCodeImage;
+
+    [ObservableProperty] private ImageSource _qrCodeImage;
     public decimal TotalSol => Math.Round(EuroPrice / SolanaRate, 3);
 
     public string ShortWalletAddress =>
@@ -42,7 +32,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     public string OrderId { get; }
 
     [ObservableProperty] private string _emailAddress;
-    
+
     [RelayCommand]
     private async Task NewTransactionAsync()
     {
@@ -52,7 +42,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         await Shell.Current.GoToAsync(".."); // Navigates back to MainPage
     }
 
-    
+
     private readonly IOrderStorageService _orderStorageService;
     private readonly IWaffleService _waffleService;
     private readonly IEmailService _emailService;
@@ -65,14 +55,14 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         IOrderStorageService orderStorageService,
         IWaffleService waffleService,
         IEmailService emailService
-        )
+    )
     {
         OrderedItems = orderedItems;
         EuroPrice = euroPrice;
         SolanaRate = solanaRate;
         StoreWalletAddress = storeWalletAddress;
         OrderId = Guid.NewGuid().ToString().Split('-')[0];
-        
+
         _orderStorageService = orderStorageService;
         _waffleService = waffleService;
         _emailService = emailService;
@@ -88,14 +78,15 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
             var encodedLabel = Uri.EscapeDataString("WaffleMoments");
             var encodedMemo = Uri.EscapeDataString($"Order-{OrderId}");
             var encodedMsg = Uri.EscapeDataString("Vielen Dank!");
-            
+
             var solUri =
                 $"solana:{StoreWalletAddress}?amount={TotalSol.ToString(CultureInfo.InvariantCulture)}&label={encodedLabel}&memo={encodedMemo}&message={encodedMsg}";
-            
+
             QrCodeImage = await Task.Run(() => qrCodeService.GenerateQrCode(solUri));
             Console.WriteLine("QR Code generated.");
-            Console.WriteLine($"Final QR Payload: solana:{StoreWalletAddress}?amount={TotalSol.ToString(CultureInfo.InvariantCulture)}&label={encodedLabel}&memo={encodedMemo}&message={encodedMsg}");
-            
+            Console.WriteLine(
+                $"Final QR Payload: solana:{StoreWalletAddress}?amount={TotalSol.ToString(CultureInfo.InvariantCulture)}&label={encodedLabel}&memo={encodedMemo}&message={encodedMsg}");
+
         }
         catch (Exception ex)
         {
@@ -111,29 +102,14 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         try
         {
             var tracker = new TxnTracker();
-            var success = 
+            string? txSignature =
                 await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId, TimeSpan.FromMinutes(3));
 
-            if (success)
+            if (!string.IsNullOrEmpty(txSignature))
             {
                 PaymentConfirmed = true;
 
-                string userEmail = null;
-
-                bool wantsEmail = await Shell.Current.DisplayAlert(
-                    "Zahlung erfolgreich",
-                    "Möchten Sie eine Quittung per E-Mail erhalten?",
-                    "Ja", "Nein");
-
-                if (wantsEmail)
-                {
-                    userEmail = await Shell.Current.DisplayPromptAsync(
-                        "E-Mail eingeben",
-                        "Bitte geben Sie Ihre E-Mail-Adresse ein:");
-
-                    Console.WriteLine($"E-Mail-Adresse für Quittung: {userEmail}");
-                }
-
+                // Build the order to save
                 var completedOrder = new CompletedOrder
                 {
                     OrderId = OrderId,
@@ -141,24 +117,26 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
                     TotalEur = EuroPrice,
                     TotalSol = TotalSol,
                     Wallet = StoreWalletAddress,
+                    TxSignature = txSignature,
                     Timestamp = DateTime.Now
                 };
 
+                // Save to DB IMMEDIATELY after order confirmation
                 await _orderStorageService.SaveOrderAsync(completedOrder);
 
-                // Send Email AFTER storing
-                if (!string.IsNullOrWhiteSpace(userEmail))
-                
+                // Prompt for email AFTER order is saved
+                bool wantsEmail = await Shell.Current.DisplayAlert(
+                    "Zahlung erfolgreich",
+                    "Möchten Sie eine Quittung per E-Mail erhalten?",
+                    "Ja", "Nein");
+
+                if (wantsEmail)
                 {
-                    try
+                    var email = await Shell.Current.DisplayPromptAsync("E-Mail eingeben",
+                        "Bitte geben Sie Ihre E-Mail-Adresse ein:");
+                    if (!string.IsNullOrWhiteSpace(email))
                     {
-                        await _emailService.SendReceiptAsync(userEmail, completedOrder, OrderedItems.ToList());
-                        Console.WriteLine($"📬 Quittung an {userEmail} gesendet");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Fehler beim E-Mail-Versand: {ex.Message}");
-                        await Shell.Current.DisplayAlert("Fehler", "Die Quittung konnte nicht gesendet werden.", "OK");
+                        await _emailService.SendReceiptAsync(email, completedOrder, OrderedItems.ToList());
                     }
                 }
             }

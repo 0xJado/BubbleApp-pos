@@ -6,7 +6,7 @@ namespace BubbleLib;
 public class CompletedOrder
 {
     [PrimaryKey, AutoIncrement]
-    public int Id { get; set; }
+    public int OrderNumber { get; set; }
 
     public string OrderId { get; set; }
     public string ItemsSummary { get; set; }

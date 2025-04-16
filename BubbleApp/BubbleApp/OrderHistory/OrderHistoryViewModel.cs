@@ -28,7 +28,12 @@ namespace BubbleAppNew.OrderHistory
             {
                 IsRefreshing = true;
                 var ordersFromDb = await _orderStorageService.GetOrdersAsync();
-                Orders = new ObservableCollection<CompletedOrder>(ordersFromDb.OrderByDescending(o => o.Timestamp));
+
+                Orders.Clear();
+                foreach (var order in ordersFromDb.OrderByDescending(o => o.Timestamp))
+                {
+                    Orders.Add(order);
+                }
             }
             catch (Exception ex)
             {

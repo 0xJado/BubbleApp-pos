@@ -21,6 +21,11 @@
                     <VerticalStackLayout Spacing="5">
                         <Label
                             FontAttributes="Bold"
+                            FontSize="14"
+                            Text="{Binding OrderNumber, StringFormat='Order #{0}'}"
+                            TextColor="DarkBlue" />
+                        <Label
+                            FontAttributes="Bold"
                             FontSize="18"
                             Text="{Binding OrderId, StringFormat='Bestell-ID: {0}'}" />
                         <Label FontSize="16" Text="{Binding ItemsSummary}" />
@@ -30,6 +35,12 @@
                             FontSize="14"
                             Text="{Binding Timestamp, StringFormat='Datum: {0:dd.MM.yyyy HH:mm}'}"
                             TextColor="Gray" />
+                        <Label
+                            FontSize="12"
+                            LineBreakMode="CharacterWrap"
+                            MaxLines="2"
+                            Text="{Binding TxSignature, StringFormat='Tx Hash: {0}'}"
+                            TextColor="DimGray" />
                     </VerticalStackLayout>
                 </Frame>
             </DataTemplate>
