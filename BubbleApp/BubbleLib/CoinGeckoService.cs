@@ -4,21 +4,25 @@ using System.Threading.Tasks;
 
 namespace BubbleLib;
 
-
+/// Interface for retrieving the current exchange rate between Solana (SOL) and Euro (EUR).
 public interface ICoinGeckoService
 {
+    /// Asynchronously fetches the current SOL/EUR exchange rate using the CoinGecko API.
     Task<decimal> GetSolanaEuroExchangeRateAsync();
 }
 
+/// Service implementation for accessing CoinGecko's public API to retrieve Solana exchange rates.
 public class CoinGeckoService : ICoinGeckoService
 {
     private readonly HttpClient _httpClient;
 
+    /// Injects an HTTP client for API communication.
     public CoinGeckoService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
 
+    /// Fetches and parses the latest SOL to EUR rate. Falls back to 120.00 if the request fails.
     public async Task<decimal> GetSolanaEuroExchangeRateAsync()
     {
         try

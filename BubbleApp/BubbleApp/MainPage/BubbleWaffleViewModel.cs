@@ -4,6 +4,10 @@ using BubbleLib;
 
 namespace BubbleAppNew.MainPage;
 
+/// <summary>
+/// ViewModel for the main order interface. Handles the ordering process, 
+/// price calculation, and transition to the confirmation view.
+/// </summary>
 public partial class BubbleWaffleViewModel : ObservableObject
 {
     private readonly IWaffleService _waffleService;
@@ -12,13 +16,27 @@ public partial class BubbleWaffleViewModel : ObservableObject
     private readonly IOrderStorageService _orderStorageService;
     private readonly IEmailService _emailService;
 
+    /// Reference to the available waffle menu.
     public ObservableCollection<BubbleWaffle> WaffleMenu => _waffleService.WaffleMenu;
+
+    /// Current items added to the order.
     public ObservableCollection<BubbleWaffle> OrderedItems => _waffleService.OrderedItems;
 
+    /// Current total price in EUR.
     [ObservableProperty] private decimal totalPrice;
+
+    /// Calculated price in Solana.
     [ObservableProperty] private decimal solanaPrice;
 
-    public BubbleWaffleViewModel(IWaffleService waffleService, ICoinGeckoService coinGeckoService, IQrCodeService qrCodeService, IOrderStorageService orderStorageService, IEmailService emailService)
+    /// <summary>
+    /// Initializes the viewmodel and its dependencies, and sets the initial prices.
+    /// </summary>
+    public BubbleWaffleViewModel(
+        IWaffleService waffleService,
+        ICoinGeckoService coinGeckoService,
+        IQrCodeService qrCodeService,
+        IOrderStorageService orderStorageService,
+        IEmailService emailService)
     {
         _waffleService = waffleService ?? throw new ArgumentNullException(nameof(waffleService), "Der WaffleService darf nicht null sein.");
         _coinGeckoService = coinGeckoService ?? throw new ArgumentNullException(nameof(coinGeckoService));
@@ -29,6 +47,7 @@ public partial class BubbleWaffleViewModel : ObservableObject
         UpdatePricesAsync();
     }
 
+    /// Adds a waffle item to the order and updates the total.
     [RelayCommand]
     public void AddWaffleToOrder(BubbleWaffle waffle)
     {
@@ -36,6 +55,7 @@ public partial class BubbleWaffleViewModel : ObservableObject
         UpdatePricesAsync();
     }
 
+    /// Removes a waffle item from the order and updates the total.
     [RelayCommand]
     private void RemoveWaffleFromOrder(BubbleWaffle? waffle)
     {
@@ -43,14 +63,18 @@ public partial class BubbleWaffleViewModel : ObservableObject
         _waffleService.RemoveWaffleFromOrder(waffle);
         UpdatePricesAsync();
     }
-
+    
+    /// Updates the total price and recalculates the equivalent Solana value.
     private async Task UpdatePricesAsync()
     {
         TotalPrice = _waffleService.GetTotalPrice();
         var solanaRate = await _coinGeckoService.GetSolanaEuroExchangeRateAsync();
         SolanaPrice = TotalPrice / solanaRate;
     }
-    
+
+    /// <summary>
+    /// Navigates to the order confirmation page and passes the required order data.
+    /// </summary>
     [RelayCommand]
     private async Task GenerateQrCodeAsync()
     {

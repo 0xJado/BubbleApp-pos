@@ -5,18 +5,21 @@ using QRCoder;
 
 namespace BubbleLib;
 
+/// Provides an interface for generating QR codes.
 public interface IQrCodeService
 {
+    /// Generates a QR code image from the given payload string.
     ImageSource GenerateQrCode(string payload);
 }
 
+/// Service that uses the QRCoder library to generate QR code images.
 public class QrCodeService : IQrCodeService
 {
+    /// Generates a QR code image from the given payload.
     public ImageSource GenerateQrCode(string payload)
     {
         try
         {
-            // Generate QR code data
             using var qrGenerator = new QRCodeGenerator();
             using var qrCodeData = qrGenerator.CreateQrCode(payload, QRCodeGenerator.ECCLevel.Q);
             var qrCode = new PngByteQRCode(qrCodeData);
