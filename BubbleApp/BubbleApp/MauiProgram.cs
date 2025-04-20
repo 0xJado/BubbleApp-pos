@@ -36,10 +36,8 @@ public static class MauiProgram
             return new OrderStorageService(dbPath);
         });
         builder.Services.AddSingleton<IEmailService, EmailService>();
-
-
+        builder.Services.AddSingleton<ISmtpClientWrapper, SmtpClientWrapper>();
         
         return builder.Build();
     }
-    
 }

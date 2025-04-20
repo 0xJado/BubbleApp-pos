@@ -10,7 +10,6 @@ public interface IWaffleService
     
     void AddWaffleToOrder(BubbleWaffle waffle);
     void RemoveWaffleFromOrder(BubbleWaffle waffle);
-    decimal GetWafflePrice(); 
     decimal GetTotalPrice();
     void ClearOrder();
 }
@@ -68,8 +67,6 @@ public class WaffleService : IWaffleService
             }
         }
     }
-
-    public decimal GetWafflePrice() => 8.00m;
    
     public decimal GetTotalPrice()
     {
