@@ -11,7 +11,7 @@
 
 **BubbleApp** ist ein mobiles Krypto-Bezahlsystem für Foodtrucks, das auf der Solana-Blockchain basiert. Dieses Pflichtenheft beschreibt die funktionalen und technischen Anforderungen für die Entwicklung eines Minimal Viable Products (MVP), das den gesamten Bestell- und Zahlungsprozess effizient und benutzerfreundlich gestaltet.
 
-Die App ermöglicht direkte Zahlungen in Solana (SOL), ohne zentrale Finanzplattformen oder Zahlungsdienstleister. Sie berechnet den Preis automatisch, generiert einen QR-Code für die Zahlung und überprüft in Echtzeit, ob die Transaktion auf der Blockchain bestätigt wurde. Alle Bestellungen und Zahlungen werden lokal in einer SQLite-Datenbank gespeichert. Zusätzlich können nach erfolgreicher Zahlung digitale Quittungen per E-Mail an Kunden versendet werden.
+Die App ermöglicht direkte Zahlungen in Solana (SOL), ohne zentrale Finanzplattformen oder Zahlungsdienstleister. Sie berechnet den Preis automatisch, generiert einen QR-Code für die Zahlung und überprüft in Echtzeit, ob die Transaktion auf der Blockchain bestätigt wurde. Alle Bestellungen und Zahlungen werden lokal in einer SQLite-Datenbank gespeichert. Zusätzlich können nach erfolgreicher Zahlung digitale Quittungen per Email an Kunden versendet werden.
 
 
 ## Zielsetzung des Projekts
@@ -31,7 +31,7 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 - **Blockchain-Zahlungen**: Die App generiert einen QR-Code, den Kunden mit ihrer Solana-Wallet scannen können, um die Zahlung durchzuführen.
 - **Transaktionsüberwachung**: Die BubbleApp überprüft in Echtzeit, ob die Zahlung auf der Solana-Blockchain bestätigt wurde.
 - **Datenspeicherung**: Alle Transaktionen werden lokal in einer SQLite-Datenbank gespeichert.
-- **E-Mail-Quittungen**: Nach erfolgreicher Zahlung kann eine digitale Quittung automatisch per E-Mail an den Kunden versendet werden.
+- **Email-Quittungen**: Nach erfolgreicher Zahlung kann eine digitale Quittung automatisch per Email an den Kunden versendet werden.
 
 ## Anwendungsfälle (Use Cases)
 
@@ -42,7 +42,7 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 | **QR-Code generieren**         | Ein Zahlungs-QR-Code wird basierend auf den Bestelldaten erzeugt.             |
 | **Transaktion überprüfen**     | Die App prüft auf der Solana-Blockchain, ob die Zahlung eingegangen ist.      |
 | **Daten speichern**            | Alle Bestellungen und Transaktionen werden lokal gespeichert.                 |
-| **Quittung per E-Mail senden** | Kunden erhalten eine Zahlungsbestätigung per E-Mail.                          |
+| **Quittung per Email senden** | Kunden erhalten eine Zahlungsbestätigung per Email.                          |
 
 ## Funktionale Anforderungen
 
@@ -57,7 +57,7 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 - Die App generiert einen QR-Code, der die Zahlungsdetails enthält.
 - Der aktuelle Wechselkurs (€ → SOL) wird über die CoinGecko API abgerufen.
 - Die Zahlung wird über die Solnet-Bibliothek auf der Solana-Blockchain überprüft.
-- Nach erfolgreicher Zahlung kann eine digitale Quittung per E-Mail an den Kunden gesendet werden.
+- Nach erfolgreicher Zahlung kann eine digitale Quittung per Email an den Kunden gesendet werden.
 
 ## Nicht-funktionale Anforderungen
 
@@ -99,17 +99,16 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
 | QR-Code scannen       | Die Solana-Wallet zeigt den richtigen Betrag an.          |
 | Zahlung bestätigen    | Die App erkennt die Transaktion als erfolgreich.          |
 | Bestellung speichern  | Die Daten werden korrekt in SQLite gespeichert.           |
-| Quittung senden       | Der Kunde erhält eine E-Mail mit der Zahlungsbestätigung. |
+| Quittung senden       | Der Kunde erhält eine Email mit der Zahlungsbestätigung. |
 
 ## Abgrenzung (Nicht im MVP enthalten)
 
 Folgende Features sind nicht Teil des MVPs:
-- Keine Cloud-Datenbank (Nur lokale SQLite-Speicherung)
-- Keine Benutzerverwaltung (Nur für Foodtruck-Betreiber)
+- Keine Datenbank Server (Nur lokale SQLite-Speicherung)
 
 ## Fazit
 
-Dieses Pflichtenheft definiert die Anforderungen für die **BubbleApp** als modernes, unabhängiges Krypto-Zahlungssystem für Foodtrucks. Mit **direkter Solana-Zahlung, Echtzeit-Preisberechnung, Blockchain-Transaktionsprüfung und E-Mail-Quittungen** wird eine **effiziente, digitale Bezahlmöglichkeit** geschaffen.
+Dieses Pflichtenheft definiert die Anforderungen für die **BubbleApp** als modernes, unabhängiges Krypto-Zahlungssystem für Foodtrucks. Mit **direkter Solana-Zahlung, Echtzeit-Preisberechnung, Blockchain-Transaktionsprüfung und Email-Quittungen** wird eine **effiziente, digitale Bezahlmöglichkeit** geschaffen.
 
 ## Lizenz & Kontakt
 

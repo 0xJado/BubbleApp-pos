@@ -26,7 +26,7 @@ Die App läuft lokal auf dem Tablet und ist offlinefähig (mit Ausnahme von Bloc
 3. Die Transaktion wird auf der Solana DevNet verfolgt (wird bei Produktion auf MainNet gewechselt).
 4. Bei Bestätigung wird ein entsprechender Eintrag lokal in der SQLite-Datenbank gespeichert.
 
-### 2.3 E-Mail Quittung
+### 2.3 Email Quittung
 
 Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert und versendet (MailKit + SMTP).
 
