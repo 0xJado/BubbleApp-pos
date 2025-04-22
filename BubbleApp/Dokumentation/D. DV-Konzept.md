@@ -11,6 +11,8 @@ Die BubbleApp ist eine plattformübergreifende Point-of-Sale (POS) Anwendung, en
 
 Die App läuft lokal auf dem Tablet und ist offlinefähig (mit Ausnahme von Blockchain-Abfragen(mit Fallback Wert) und Mailversand).
 
+`{ @FS: "Offlinefähig" würde ich so nicht sagen. Wenn ich die Zahlungen nicht verifizieren kann, weil ich kein Netz habe, kann mit der App nichts anfangen. }`
+
 ## 2. Datenflüsse & Funktionsweise
 
 ### 2.1 Bestellprozess
@@ -26,29 +28,31 @@ Die App läuft lokal auf dem Tablet und ist offlinefähig (mit Ausnahme von Bloc
 3. Die Transaktion wird auf der Solana DevNet verfolgt (wird bei Produktion auf MainNet gewechselt).
 4. Bei Bestätigung wird ein entsprechender Eintrag lokal in der SQLite-Datenbank gespeichert.
 
+`{ @FS: Alle Transaktionen und deren letzter ermittelter Status (abgeschlossen, offen, abgebrochen, ...) sollten gespeichert werden, wenn der Kunde eine Zahlung versucht hat. }`
+
 ### 2.3 Email Quittung
 
 Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert und versendet (MailKit + SMTP).
 
 ## 3. Technologieübersicht
 
-| Komponente            | Technologie           |
-|-----------------------|-----------------------|
-| UI                    | .NET MAUI, XAML       |
-| Logik + MVVM Binding  | CommunityToolkit.MVVM |
-| Datenhaltung          | SQLite (local)        |
-| Blockchain Tracking   | Solana RPC via Solnet |
-| QR-Code Erstellung    | QRCoder               |
-| Emailversand          | MailKit + SMTP        |
-| Kursdaten             | CoinGecko API         |
-| Unit Tests            | NUnit + Moq           |
+| Komponente           | Technologie           |
+| -------------------- | --------------------- |
+| UI                   | .NET MAUI, XAML       |
+| Logik + MVVM Binding | CommunityToolkit.MVVM |
+| Datenhaltung         | SQLite (local)        |
+| Blockchain Tracking  | Solana RPC via Solnet |
+| QR-Code Erstellung   | QRCoder               |
+| Emailversand         | MailKit + SMTP        |
+| Kursdaten            | CoinGecko API         |
+| Unit Tests           | NUnit + Moq           |
 
 ## 4. Datenmodell
 
 ### Tabelle: `CompletedOrder`
 
 | Feldname     | Typ      | Beschreibung                             |
-|--------------|----------|------------------------------------------|
+| ------------ | -------- | ---------------------------------------- |
 | OrderNumber  | Integer  | Autoincrement / eindeutige OrderNummer   |
 | OrderId      | String   | Zufällig generierte ID zur Txn-Zuordnung |
 | ItemsSummary | String   | Kurzbeschreibung der Waffelbestellung    |
@@ -73,6 +77,8 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 - Bei Bestätigung: Speicherung der Bestellung inkl. Zeitstempel und Transaktionshash
 - Zugriff über Service `OrderStorageService`, gekapselt mit SQLiteAsyncConnection
 
+`{ @FS: Nicht nur bei Bestätigung (s.o.). }`
+
 ### 5.3 Quittungsgenerierung
 
 - Email wird über `EmailService` mit SMTP-Anbindung verschickt.
@@ -84,3 +90,7 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 - Email-Adressen werden **nicht gespeichert** (DSGVO-Konformität).
 - Unit Tests prüfen alle Kernservices mit Hilfe von **Moq** (z. B. QR-Code, Mail, Preislogik).
 - SQLite-Einträge werden pro Bestellung neu erstellt (kein Überschreiben).
+
+`{ @FS: "...führen zu Logging,...": komische Formulierung. Außerdem: gibt es auch eine Ausgabe für den Anwender? }`
+`{ @FS: Was muss denn bei den QR-Codes gemockt werden? }`
+`{ @FS: Was heißt denn "SQLite-Einträge werden pro Bestellung neu erstellt (kein Überschreiben)."? }`

@@ -35,14 +35,14 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 
 ## Anwendungsfälle (Use Cases)
 
-| **Use Case**                   | **Beschreibung**                                                              |
-| ------------------------------ | ----------------------------------------------------------------------------- |
-| **Bestellung aufnehmen**       | Der Betreiber kann eine Waffelbestellung erfassen, bearbeiten und stornieren. |
-| **Preisberechnung**            | Die App berechnet den Gesamtpreis und zeigt ihn in € und SOL an.              |
-| **QR-Code generieren**         | Ein Zahlungs-QR-Code wird basierend auf den Bestelldaten erzeugt.             |
-| **Transaktion überprüfen**     | Die App prüft auf der Solana-Blockchain, ob die Zahlung eingegangen ist.      |
-| **Daten speichern**            | Alle Bestellungen und Transaktionen werden lokal gespeichert.                 |
-| **Quittung per Email senden** | Kunden erhalten eine Zahlungsbestätigung per Email.                          |
+| **Use Case**                  | **Beschreibung**                                                              |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| **Bestellung aufnehmen**      | Der Betreiber kann eine Waffelbestellung erfassen, bearbeiten und stornieren. |
+| **Preisberechnung**           | Die App berechnet den Gesamtpreis und zeigt ihn in € und SOL an.              |
+| **QR-Code generieren**        | Ein Zahlungs-QR-Code wird basierend auf den Bestelldaten erzeugt.             |
+| **Transaktion überprüfen**    | Die App prüft auf der Solana-Blockchain, ob die Zahlung eingegangen ist.      |
+| **Daten speichern**           | Alle Bestellungen und Transaktionen werden lokal gespeichert.                 |
+| **Quittung per Email senden** | Kunden erhalten eine Zahlungsbestätigung per Email.                           |
 
 ## Funktionale Anforderungen
 
@@ -51,6 +51,8 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 - Speisekarten können aus einer CSV-Datei importiert werden.
 - Der Betreiber kann Waffeln zur Bestellung hinzufügen und entfernen.
 - Der Gesamtpreis wird automatisch in Euro und Solana berechnet.
+
+`{ @FS: Wurde das mit den Speisekarten als CSV Dateien implementiert? }`
 
 ### Zahlungsprozess
 
@@ -74,6 +76,8 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
    - Speicherung von Bestellungen und Transaktionen in einer lokalen SQLite-Datenbank
    - Verwendung von Entity Framework Core für .NET 9
 
+`{ @FS: .NET 8? }`
+
 **2. Geschäftslogikschicht**
    - Zahlungslogik mit Solnet-Bibliothek
    - Echtzeit-Preisabfrage über die CoinGecko API
@@ -93,12 +97,12 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
 
 ## Testszenarien & Qualitätssicherung
 
-| **Testfall**          | **Erwartetes Ergebnis**                                   |
-| --------------------- | --------------------------------------------------------- |
-| Bestellung hinzufügen | Die Waffel erscheint im Warenkorb.                        |
-| QR-Code scannen       | Die Solana-Wallet zeigt den richtigen Betrag an.          |
-| Zahlung bestätigen    | Die App erkennt die Transaktion als erfolgreich.          |
-| Bestellung speichern  | Die Daten werden korrekt in SQLite gespeichert.           |
+| **Testfall**          | **Erwartetes Ergebnis**                                  |
+| --------------------- | -------------------------------------------------------- |
+| Bestellung hinzufügen | Die Waffel erscheint im Warenkorb.                       |
+| QR-Code scannen       | Die Solana-Wallet zeigt den richtigen Betrag an.         |
+| Zahlung bestätigen    | Die App erkennt die Transaktion als erfolgreich.         |
+| Bestellung speichern  | Die Daten werden korrekt in SQLite gespeichert.          |
 | Quittung senden       | Der Kunde erhält eine Email mit der Zahlungsbestätigung. |
 
 ## Abgrenzung (Nicht im MVP enthalten)
