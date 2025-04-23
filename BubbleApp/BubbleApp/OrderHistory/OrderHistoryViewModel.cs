@@ -5,20 +5,29 @@ namespace BubbleAppNew.OrderHistory
 {
     /// <summary>
     /// ViewModel for displaying and refreshing the historical list of completed orders.
+    /// Interfaces with the order storage service to load order data from the local database.
     /// </summary>
     public partial class OrderHistoryViewModel : ObservableObject
     {
         private readonly IOrderStorageService _orderStorageService;
 
-        /// Observable list of all completed orders shown in the UI.
-        [ObservableProperty] private ObservableCollection<CompletedOrder> _orders;
-
-        /// Indicates whether the UI is currently in a refreshing/loading state.
-        [ObservableProperty] private bool _isRefreshing;
+        /// <summary>
+        /// Collection of completed orders that is bound to the UI.
+        /// </summary>
+        [ObservableProperty] 
+        private ObservableCollection<CompletedOrder> _orders;
 
         /// <summary>
-        /// Initializes the viewmodel and immediately loads order history from local storage.
+        /// Flag indicating whether the order data is currently being refreshed.
+        /// Useful for showing loading indicators in the UI.
         /// </summary>
+        [ObservableProperty] 
+        private bool _isRefreshing;
+
+        /// <summary>
+        /// Constructor that initializes the viewmodel and triggers the loading of order data.
+        /// </summary>
+        /// <param name="orderStorageService">Service for retrieving stored order data.</param>
         public OrderHistoryViewModel(IOrderStorageService orderStorageService)
         {
             _orderStorageService = orderStorageService;
@@ -27,7 +36,8 @@ namespace BubbleAppNew.OrderHistory
         }
 
         /// <summary>
-        /// Loads completed orders from the SQLite database and updates the Orders collection.
+        /// Loads the list of completed orders from the database and updates the observable collection.
+        /// Orders are sorted by timestamp in descending order to show the latest orders first.
         /// </summary>
         private async Task LoadOrdersAsync()
         {
@@ -53,7 +63,7 @@ namespace BubbleAppNew.OrderHistory
         }
 
         /// <summary>
-        /// Public method that allows the UI to trigger a refresh of the orders list.
+        /// Exposed method for the UI to manually trigger a refresh of the order history.
         /// </summary>
         public async Task RefreshFromViewAsync()
         {

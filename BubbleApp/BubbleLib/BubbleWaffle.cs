@@ -2,32 +2,54 @@
 
 namespace BubbleLib;
 
-/// Represents a bubble waffle item in the menu or order.
+/// <summary>
+/// Represents a single bubble waffle item, either from the menu or as part of an order.
+/// Includes pricing logic, quantity tracking, and data binding support.
+/// </summary>
 public partial class BubbleWaffle : ObservableObject
 {
-    /// Number of units ordered (default: 1)
+    /// <summary>
+    /// The number of waffle units ordered. Default is 1.
+    /// </summary>
     [ObservableProperty]
     private int quantity = 1;
 
-    /// Custom price per unit when ordering a custom item 
+    /// <summary>
+    /// Optional custom price per unit. If set, overrides the default price.
+    /// </summary>
     [ObservableProperty]
     private decimal? customPrice;
 
-    /// Name of the waffle item
+    /// <summary>
+    /// The name of the waffle item.
+    /// </summary>
     public string WaffleName { get; set; } = string.Empty;
 
-    /// Automatically fallback to default price if no custom price
+    /// <summary>
+    /// Gets the price per unit. Falls back to a default price if no custom price is set.
+    /// </summary>
     public decimal WafflePrice => CustomPrice ?? 8.00m;
 
-    /// Recalculate every time Quantity or Price changes
+    /// <summary>
+    /// Gets the total price for this item based on quantity and unit price.
+    /// </summary>
     public decimal TotalPrice => WafflePrice * Quantity;
 
-    /// Notify the UI that TotalPrice needs to update
+    /// <summary>
+    /// Triggered when the quantity changes to update the total price.
+    /// </summary>
+    /// <param name="oldValue">The old quantity value.</param>
+    /// <param name="newValue">The new quantity value.</param>
     partial void OnQuantityChanged(int oldValue, int newValue)
     {
         OnPropertyChanged(nameof(TotalPrice));
     }
 
+    /// <summary>
+    /// Triggered when the custom price changes to update the total price.
+    /// </summary>
+    /// <param name="oldValue">The previous custom price.</param>
+    /// <param name="newValue">The new custom price.</param>
     partial void OnCustomPriceChanged(decimal? oldValue, decimal? newValue)
     {
         OnPropertyChanged(nameof(TotalPrice));

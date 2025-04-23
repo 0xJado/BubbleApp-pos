@@ -5,17 +5,29 @@ using QRCoder;
 
 namespace BubbleLib;
 
-/// Provides an interface for generating QR codes.
+/// <summary>
+/// Provides functionality to generate QR code images based on a string payload.
+/// </summary>
 public interface IQrCodeService
 {
-    /// Generates a QR code image from the given payload string.
+    /// <summary>
+    /// Generates a QR code image from the specified string payload.
+    /// </summary>
+    /// <param name="payload">The string content to encode in the QR code.</param>
+    /// <returns>An <see cref="ImageSource"/> containing the generated QR code image, or null if generation fails.</returns>
     ImageSource GenerateQrCode(string payload);
 }
 
-/// Service that uses the QRCoder library to generate QR code images.
+/// <summary>
+/// Implementation of <see cref="IQrCodeService"/> that utilizes the QRCoder library to generate QR codes.
+/// </summary>
 public class QrCodeService : IQrCodeService
 {
-    /// Generates a QR code image from the given payload.
+    /// <summary>
+    /// Generates a QR code image using the QRCoder library.
+    /// </summary>
+    /// <param name="payload">The text to encode in the QR code.</param>
+    /// <returns>An image source containing the QR code, or null if an error occurs during generation.</returns>
     public ImageSource GenerateQrCode(string payload)
     {
         try

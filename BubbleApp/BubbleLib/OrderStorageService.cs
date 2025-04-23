@@ -4,29 +4,46 @@ using SQLite;
 
 namespace BubbleLib;
 
-/// Interface for managing order storage operations using SQLite.
+/// <summary>
+/// Interface for managing storage and retrieval of completed orders using SQLite.
+/// </summary>
 public interface IOrderStorageService
 {
-    /// Retrieves a list of completed orders, sorted by timestamp in descending order.
+    /// <summary>
+    /// Retrieves all completed orders from the database, sorted in descending order by timestamp.
+    /// </summary>
+    /// <returns>A list of <see cref="CompletedOrder"/> instances representing all saved orders.</returns>
     Task<List<CompletedOrder>> GetOrdersAsync();
 
+    /// <summary>
     /// Saves a completed order to the database.
+    /// </summary>
+    /// <param name="order">The order object to be saved.</param>
+    /// <returns>An integer representing the number of rows affected.</returns>
     Task<int> SaveOrderAsync(CompletedOrder order);
 }
 
-/// Implements persistent storage for completed orders using SQLite.
+/// <summary>
+/// Concrete implementation of <see cref="IOrderStorageService"/> using SQLite for persistent local storage.
+/// </summary>
 public class OrderStorageService : IOrderStorageService
 {
     private readonly SQLiteAsyncConnection _database;
 
-    /// Initializes a new SQLite connection and creates the CompletedOrder table if it doesn't exist.
+    /// <summary>
+    /// Initializes the <see cref="OrderStorageService"/> with a database path and ensures the required table exists.
+    /// </summary>
+    /// <param name="dbPath">Path to the local SQLite database file.</param>
     public OrderStorageService(string dbPath)
     {
         _database = new SQLiteAsyncConnection(dbPath);
         _database.CreateTableAsync<CompletedOrder>().Wait();
     }
 
-    /// Returns all orders from the database, sorted with the newest first.
+    /// <summary>
+    /// Retrieves all orders from the database, sorted by descending timestamp (newest first).
+    /// </summary>
+    /// <returns>A task that represents the asynchronous fetch operation. The task result contains a list of orders.</returns>
     public async Task<List<CompletedOrder>> GetOrdersAsync()
     {
         return await _database.Table<CompletedOrder>()
@@ -34,7 +51,11 @@ public class OrderStorageService : IOrderStorageService
             .ToListAsync();
     }
 
-    /// Inserts a new completed order into the database.
+    /// <summary>
+    /// Saves a single <see cref="CompletedOrder"/> to the SQLite database.
+    /// </summary>
+    /// <param name="order">The order object to persist.</param>
+    /// <returns>A task that represents the asynchronous insert operation. The result is the number of inserted rows.</returns>
     public Task<int> SaveOrderAsync(CompletedOrder order) =>
         _database.InsertAsync(order);
 }

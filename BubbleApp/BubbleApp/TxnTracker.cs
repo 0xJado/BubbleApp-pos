@@ -5,21 +5,30 @@ using System.Diagnostics;
 namespace BubbleAppNew;
 
 /// <summary>
-/// Tracks transactions on the Solana blockchain to detect a finalized payment with a matching order ID and expected SOL amount.
+/// Tracks transactions on the Solana blockchain to detect a finalized payment
+/// with a matching order ID (used as memo) and the expected SOL amount.
 /// </summary>
 public class TxnTracker
 {
     private readonly IRpcClient _rpcClient;
 
+    /// <summary>
+    /// Initializes the transaction tracker with a Solana DevNet RPC client.
+    /// </summary>
     public TxnTracker()
     {
-        // Uses DevNet for testing; switch to MainNet when needed
+        // Uses DevNet for testing; for production, switch to MainNet.
         _rpcClient = ClientFactory.GetClient(Cluster.DevNet);
     }
 
     /// <summary>
-    /// Waits for a payment matching a given orderId (via memo) and expected SOL amount.
+    /// Asynchronously waits for a confirmed transaction on the blockchain that matches the expected memo and lamport value.
     /// </summary>
+    /// <param name="walletAddress">The public key of the recipient wallet.</param>
+    /// <param name="expectedSol">The expected transaction amount in SOL.</param>
+    /// <param name="orderId">The unique order identifier used in the transaction memo.</param>
+    /// <param name="timeout">The maximum duration to wait for a matching transaction.</param>
+    /// <returns>The signature of the matching transaction, or null if no match is found within the timeout period.</returns>
     public async Task<string?> WaitForPaymentAsync(string walletAddress, decimal expectedSol, string orderId, TimeSpan timeout)
     {
         var stopwatch = Stopwatch.StartNew();
@@ -70,10 +79,11 @@ public class TxnTracker
     }
 
     /// <summary>
-    /// Filters only finalized transactions that contain the expected order ID in their memo.
-    /// Fixes an issue where we would get confirmed transactions with the same amount but a different
-    /// txn ID from previous orders that were called from the initial call. 
+    /// Filters the transaction signatures to only include finalized entries with the specified memo.
     /// </summary>
+    /// <param name="signatureInfos">The list of signature status information objects.</param>
+    /// <param name="expectedOrderId">The expected memo string to match against.</param>
+    /// <returns>Filtered enumerable of matching signature status entries.</returns>
     private static IEnumerable<SignatureStatusInfo> GetFinalizedSignaturesWithExpectedOrderId(
         List<SignatureStatusInfo> signatureInfos,
         string expectedOrderId)

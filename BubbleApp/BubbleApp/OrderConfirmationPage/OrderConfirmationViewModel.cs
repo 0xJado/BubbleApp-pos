@@ -5,69 +5,53 @@ using BubbleLib;
 namespace BubbleAppNew.OrderConfirmationPage;
 
 /// <summary>
-/// ViewModel responsible for displaying the confirmation view,
-/// managing QR code generation, payment tracking, and saving order details.
+/// ViewModel responsible for managing the order confirmation page, including
+/// QR code generation, payment monitoring, and order persistence.
 /// </summary>
 public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttributable
 {
-    /// Indicates whether the app is currently waiting for a blockchain payment.
     [ObservableProperty] private bool _isWaitingForPayment;
-
-    /// Indicates if a payment was successfully confirmed.
     [ObservableProperty] private bool _paymentConfirmed;
-
-    /// Indicates if the payment attempt timed out after a set duration.
     [ObservableProperty] private bool _paymentTimedOut;
-
-    /// The list of items that were ordered.
     [ObservableProperty] private ObservableCollection<BubbleWaffle> _orderedItems;
-
-    /// Total price in Euro.
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))]
-    private decimal _euroPrice;
-
-    /// Current Solana to Euro conversion rate.
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))]
-    private decimal _solanaRate;
-
-    /// Solana wallet address of the store.
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShortWalletAddress))]
-    private string _storeWalletAddress;
-
-    /// Image for the generated QR code.
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))] private decimal _euroPrice;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))] private decimal _solanaRate;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShortWalletAddress))] private string _storeWalletAddress;
     [ObservableProperty] private ImageSource _qrCodeImage;
+    [ObservableProperty] private string _emailAddress;
 
-    /// Displays the total price converted into Solana.
+    /// <summary>
+    /// Gets the total price in Solana based on the Euro amount and the current SOL exchange rate.
+    /// </summary>
     public decimal TotalSol => Math.Round(EuroPrice / SolanaRate, 3);
 
-    /// Truncated version of the wallet address for display purposes.
+    /// <summary>
+    /// Provides a shortened display version of the wallet address.
+    /// </summary>
     public string ShortWalletAddress =>
         string.IsNullOrWhiteSpace(StoreWalletAddress)
             ? string.Empty
             : $"{StoreWalletAddress[..6]}...{StoreWalletAddress[^4..]}";
 
-    /// Unique identifier for the current order.
+    /// <summary>
+    /// Gets the unique identifier for the current order session.
+    /// </summary>
     public string OrderId { get; }
-
-    /// Optional email address provided by the user for receipt delivery.
-    [ObservableProperty] private string _emailAddress;
-
-    /// Clears the current order and resets the form for a new transaction.
-    [RelayCommand]
-    private async Task NewTransactionAsync()
-    {
-        _waffleService.ClearOrder();
-        EmailAddress = string.Empty;
-        await Shell.Current.GoToAsync(".."); // Navigates back to MainPage
-    }
 
     private readonly IOrderStorageService _orderStorageService;
     private readonly IWaffleService _waffleService;
     private readonly IEmailService _emailService;
 
     /// <summary>
-    /// Constructor that injects all required services and sets the order context.
+    /// Initializes a new instance of the <see cref="OrderConfirmationViewModel"/> class.
     /// </summary>
+    /// <param name="orderedItems">List of items included in the order.</param>
+    /// <param name="euroPrice">Total price in euros.</param>
+    /// <param name="solanaRate">Current SOL to EUR exchange rate.</param>
+    /// <param name="storeWalletAddress">Destination wallet address for payment.</param>
+    /// <param name="orderStorageService">Service for storing completed order data.</param>
+    /// <param name="waffleService">Service for managing the order state.</param>
+    /// <param name="emailService">Service for sending email receipts.</param>
     public OrderConfirmationViewModel(
         ObservableCollection<BubbleWaffle> orderedItems,
         decimal euroPrice,
@@ -75,8 +59,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         string storeWalletAddress,
         IOrderStorageService orderStorageService,
         IWaffleService waffleService,
-        IEmailService emailService
-    )
+        IEmailService emailService)
     {
         OrderedItems = orderedItems;
         EuroPrice = euroPrice;
@@ -90,8 +73,20 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     }
 
     /// <summary>
-    /// Generates a Solana QR code based on the order details.
+    /// Clears the current order and resets the input for a new transaction session.
     /// </summary>
+    [RelayCommand]
+    private async Task NewTransactionAsync()
+    {
+        _waffleService.ClearOrder();
+        EmailAddress = string.Empty;
+        await Shell.Current.GoToAsync("..");
+    }
+
+    /// <summary>
+    /// Generates a Solana-compatible QR code for the payment request.
+    /// </summary>
+    /// <param name="qrCodeService">Service used to generate the QR code image.</param>
     public async Task GenerateQrCodeAsync(IQrCodeService qrCodeService)
     {
         if (string.IsNullOrWhiteSpace(StoreWalletAddress) || TotalSol <= 0)
@@ -117,8 +112,9 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     }
 
     /// <summary>
-    /// Triggered when the page is navigated to. Starts the transaction watcher and handles order saving and receipt.
+    /// Handles parameter injection on navigation and monitors the transaction status on the Solana blockchain.
     /// </summary>
+    /// <param name="query">Dictionary of query parameters from navigation.</param>
     public async void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         Console.WriteLine("Applying query attributes.");
@@ -133,7 +129,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
             if (!string.IsNullOrEmpty(txSignature))
             {
                 PaymentConfirmed = true;
-                
+
                 // Builds the order details for local storage
                 var completedOrder = new CompletedOrder
                 {
@@ -146,7 +142,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
                     Timestamp = DateTime.Now
                 };
 
-                // Saves to DB IMMEDIATELY after the order is confirmed
+                // Saves to DB immediately after the order is confirmed
                 await _orderStorageService.SaveOrderAsync(completedOrder);
 
                 //Prompts for an email address to send the receipt if the user wants it
