@@ -48,11 +48,8 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 
 ### Bestellmanagement
 
-- Speisekarten können aus einer CSV-Datei importiert werden.
 - Der Betreiber kann Waffeln zur Bestellung hinzufügen und entfernen.
 - Der Gesamtpreis wird automatisch in Euro und Solana berechnet.
-
-`{ @FS: Wurde das mit den Speisekarten als CSV Dateien implementiert? }`
 
 ### Zahlungsprozess
 
@@ -70,13 +67,11 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 
 ## Technische Architektur
 
-Die BubbleApp basiert auf einer dreischichtigen Architektur:
-
 **1. Datenzugriffsschicht**
-   - Speicherung von Bestellungen und Transaktionen in einer lokalen SQLite-Datenbank
-   - Verwendung von Entity Framework Core für .NET 9
-
-`{ @FS: .NET 8? }`
+	- Speicherung von Bestellungen und Transaktionen in einer lokalen SQLite-Datenbank
+	- Zugriff über SQLiteAsyncConnection aus dem SQLite.NET-Paket
+	- Implementierung als eigene Klassenbibliothek basierend auf .NET Standard 2.1
+	- Integration über Dependency Injection in die .NET MAUI Anwendung
 
 **2. Geschäftslogikschicht**
    - Zahlungslogik mit Solnet-Bibliothek
