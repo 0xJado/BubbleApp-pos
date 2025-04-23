@@ -6,12 +6,10 @@ Die BubbleApp ist eine plattformübergreifende Point-of-Sale (POS) Anwendung, en
 
 - **Frontend:** .NET MAUI App (UI in XAML, Logik in ViewModels über MVVM Pattern)
 - **Services:** Verantwortlich für Preisberechnung, QR-Code-Erzeugung, Blockchain-Verarbeitung, Datenhaltung und Emailversand
-- **Backend-Komponente:** SQLite-Datenbank lokal eingebettet zur Bestellpersistierung
+- **Backend-Komponente:** Lokal eingebettete SQLite-Datenbank zur Bestellpersistierung
 - **Externe Schnittstellen:** Solana Blockchain (via Solnet RPC), CoinGecko API, SMTP-Mailserver via MailKit
 
-Die App läuft lokal auf dem Tablet und ist offlinefähig (mit Ausnahme von Blockchain-Abfragen(mit Fallback Wert) und Mailversand).
-
-`{ @FS: "Offlinefähig" würde ich so nicht sagen. Wenn ich die Zahlungen nicht verifizieren kann, weil ich kein Netz habe, kann mit der App nichts anfangen. }`
+Die App ist so konzipiert, dass sie grundlegende Funktionen wie die Erfassung von Bestellungen und die Anzeige der Benutzeroberfläche auch ohne aktive Internetverbindung ausführen kann. Allerdings erfordern bestimmte Funktionen, wie die Verifizierung von Blockchain-Zahlungen und der Versand von E-Mails, eine aktive Internetverbindung. Für den Fall, dass keine Verbindung besteht, implementiert die App Fallback-Mechanismen, wie beispielsweise die Verwendung des zuletzt abgerufenen Wechselkurses von CoinGecko, um die Benutzererfahrung so nahtlos wie möglich zu gestalten.​
 
 ## 2. Datenflüsse & Funktionsweise
 
@@ -23,12 +21,13 @@ Die App läuft lokal auf dem Tablet und ist offlinefähig (mit Ausnahme von Bloc
 
 ### 2.2 Zahlung
 
-1. Nach Auswahl wird automatisch der aktuelle SOL-Kurs via **CoinGecko API** geladen.
-2. Daraus wird ein Zahlungsrequest als https Link (solana:) generiert und als **QR-Code** dargestellt.
-3. Die Transaktion wird auf der Solana DevNet verfolgt (wird bei Produktion auf MainNet gewechselt).
-4. Bei Bestätigung wird ein entsprechender Eintrag lokal in der SQLite-Datenbank gespeichert.
+1. Nach Auswahl wird automatisch der aktuelle SOL-Kurs über die CoinGecko API abgerufen.
 
-`{ @FS: Alle Transaktionen und deren letzter ermittelter Status (abgeschlossen, offen, abgebrochen, ...) sollten gespeichert werden, wenn der Kunde eine Zahlung versucht hat. }`
+2. Auf Basis des berechneten Betrags wird ein Zahlungsrequest im Solana URI-Format generiert und als QR-Code dargestellt.
+
+3. Die Transaktion wird anschließend über das Solana DevNet verfolgt (in der Produktionsumgebung erfolgt der Wechsel auf das MainNet).
+
+4. Unabhängig vom Ergebnis (erfolgreich, fehlgeschlagen oder ausstehend) wird jeder Zahlungsversuch inklusive des ermittelten Status in der lokalen SQLite-Datenbank gespeichert. Dadurch kann der Betreiber jederzeit den Verlauf aller Transaktionen nachvollziehen – auch bei abgebrochenen oder nicht vollständig durchgeführten Zahlungen.
 
 ### 2.3 Email Quittung
 
@@ -67,30 +66,38 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 ### 5.1 Zahlungserkennung via Blockchain
 
 - Es wird regelmäßig die Signaturliste der Wallet abgefragt (`GetSignaturesForAddressAsync`).
+
 - Danach wird jede Transaktion geprüft:
   - **Status:** finalized
   - **Memo:** enthält gültige `Order-ID`
-  - **Differenz (Delta):** Der erhaltene Betrag wird als Differenz (PostBalance - PreBalance) überprüft.
+  - **Differenz (Delta):** Der erhaltene Betrag wird als Differenz (PostBalance - PreBalance) überprüft
 
 ### 5.2 Datenpersistenz
 
-- Bei Bestätigung: Speicherung der Bestellung inkl. Zeitstempel und Transaktionshash
-- Zugriff über Service `OrderStorageService`, gekapselt mit SQLiteAsyncConnection
+- Jeder Zahlungsversuch wird unabhängig vom Ergebnis in der SQLite-Datenbank gespeichert – inklusive Zeitstempel, Zahlungsstatus (z. B. ausstehend, bestätigt, fehlgeschlagen) sowie ggf. Transaktionshash.
 
-`{ @FS: Nicht nur bei Bestätigung (s.o.). }`
+- Der Zugriff erfolgt über den Service OrderStorageService, der mittels SQLiteAsyncConnection gekapselt ist und eine strukturierte sowie performante Datenhaltung gewährleistet.
 
 ### 5.3 Quittungsgenerierung
 
 - Email wird über `EmailService` mit SMTP-Anbindung verschickt.
+
 - Inhalte: Bestellübersicht, Preisaufschlüsselung, Steueranteil, Transaktionsdaten.
 
 ## 6. Sicherheits- & Fehlerbehandlung
 
-- Fehlerhafte Blockchain-Abfragen und API-Calls führen zu Logging, ohne App-Crash.
-- Email-Adressen werden **nicht gespeichert** (DSGVO-Konformität).
-- Unit Tests prüfen alle Kernservices mit Hilfe von **Moq** (z. B. QR-Code, Mail, Preislogik).
-- SQLite-Einträge werden pro Bestellung neu erstellt (kein Überschreiben).
+- Fehlerhafte API- oder Blockchain-Abfragen werden durch konsolenbasiertes Logging erfasst, um Debugging im Entwicklungsmodus zu ermöglichen. Für den Endnutzer erfolgt bei kritischen Fehlern (z. B. API-Ausfall) eine visuelle Rückmeldung über die Benutzeroberfläche – etwa durch Warnhinweise oder fallback-basierte Werte.
 
-`{ @FS: "...führen zu Logging,...": komische Formulierung. Außerdem: gibt es auch eine Ausgabe für den Anwender? }`
-`{ @FS: Was muss denn bei den QR-Codes gemockt werden? }`
-`{ @FS: Was heißt denn "SQLite-Einträge werden pro Bestellung neu erstellt (kein Überschreiben)."? }`
+- Email-Adressen werden nicht dauerhaft gespeichert, sondern lediglich temporär zur Quittungsübermittlung verwendet. Nach erfolgreichem Versand wird die Adresse verworfen, um die Einhaltung der DSGVO zu gewährleisten.
+
+- Für die Absicherung der Anwendung wurden Unit Tests mit NUnit durchgeführt. Dabei kamen gezielte Mocks mittels Moq zum Einsatz, insbesondere für schwer testbare oder externe Komponenten wie:
+
+	- ICoinGeckoService: Rückgabe eines kontrollierten Wechselkurses
+
+	- IEmailService / ISmtpClientWrapper: Simulation des Emailversands
+
+	- IOrderStorageService: Prüfung von Speicher- und Abrufoperationen ohne echte Datenbank
+
+	- IQrCodeService: Test ohne tatsächliche QR-Code-Generierung
+
+- Alle Transaktionen werden in der lokalen SQLite-Datenbank als eigenständige Einträge gespeichert. Eine Bestellung erzeugt stets einen neuen Datensatz – es erfolgt kein Überschreiben bestehender Einträge, wodurch auch unvollständige oder abgebrochene Transaktionen nachvollzogen werden können.
