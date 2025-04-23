@@ -67,6 +67,8 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 
 ## Technische Architektur
 
+Die BubbleApp basiert auf einer dreischichtigen Architektur:
+
 **1. Datenzugriffsschicht**
 	- Speicherung von Bestellungen und Transaktionen in einer lokalen SQLite-Datenbank
 	- Zugriff über SQLiteAsyncConnection aus dem SQLite.NET-Paket
@@ -95,7 +97,7 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 | **Testfall**          | **Erwartetes Ergebnis**                                  |
 | --------------------- | -------------------------------------------------------- |
 | Bestellung hinzufügen | Die Waffel erscheint im Warenkorb.                       |
-| QR-Code scannen       | Die Solana-Wallet zeigt den richtigen Betrag an.         |
+| QR Code scannen       | Die Solana-Wallet zeigt den richtigen Betrag an.         |
 | Zahlung bestätigen    | Die App erkennt die Transaktion als erfolgreich.         |
 | Bestellung speichern  | Die Daten werden korrekt in SQLite gespeichert.          |
 | Quittung senden       | Der Kunde erhält eine Email mit der Zahlungsbestätigung. |
@@ -104,12 +106,8 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 
 Folgende Features sind nicht Teil des MVPs:
 - Keine Datenbank Server (Nur lokale SQLite-Speicherung)
+- Kein CSV Import der Speisekarte
 
 ## Fazit
 
 Dieses Pflichtenheft definiert die Anforderungen für die **BubbleApp** als modernes, unabhängiges Krypto-Zahlungssystem für Foodtrucks. Mit **direkter Solana-Zahlung, Echtzeit-Preisberechnung, Blockchain-Transaktionsprüfung und Email-Quittungen** wird eine **effiziente, digitale Bezahlmöglichkeit** geschaffen.
-
-## Lizenz & Kontakt
-
-© 2025 Anthony Dreibholz-Ortiz / idesis GmbH  
-Kontakt: jado@idesis.de
