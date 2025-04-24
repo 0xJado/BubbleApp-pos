@@ -1,6 +1,9 @@
 ## DV-Konzept – BubbleApp (WaffleMoments POS App - MVP Version)
 
-### 1. Systemarchitektur
+<!-- { @FS: Hier würde ich noch einleitend darauf hinweisen, dass die Formatierung/Nummerierung des Folgenden nicht dem Original entspricht, weil es hier in die dieses Dokument übernommen wurde. } -->
+<!-- { @FS: Ist das jetzt nur ein Auszug? Wenn ja, auch hier darauf hinweisen! } -->
+
+### Systemarchitektur
 
 Die BubbleApp ist eine plattformübergreifende Point-of-Sale (POS) Anwendung, entwickelt mit .NET MAUI. Die Anwendung wird als MVP entwickelt und besteht aus folgenden Kernkomponenten:
 
@@ -13,15 +16,15 @@ Die App ist so konzipiert, dass sie grundlegende Funktionen wie die Erfassung vo
 
 <!-- { @FS: Hier nochmal erwähnen, dass der Anwender einen deutlichen Hinweis darauf erhält, wenn keine internetverbindung besteht? } -->
 
-### 2. Datenflüsse & Funktionsweise
+### Datenflüsse & Funktionsweise
 
-#### 2.1 Bestellprozess
+#### Bestellprozess
 
 1. Der Nutzer wählt Waffeln über das Frontend aus.
 2. Die gewählten Items werden in einem Service (WaffleService) gesammelt.
 3. Der Gesamtpreis wird auf Basis der Menge und Waffelpreise berechnet.
 
-#### 2.2 Zahlung
+#### Zahlung
 
 1. Nach Auswahl wird automatisch der aktuelle SOL-Kurs über die CoinGecko API abgerufen.
 2. Auf Basis des berechneten Betrags wird ein Zahlungsrequest im Solana URI-Format generiert und als QR-Code dargestellt.
@@ -29,11 +32,11 @@ Die App ist so konzipiert, dass sie grundlegende Funktionen wie die Erfassung vo
 <!-- { @FS: Wenn hier schon auf Unterschiede zwischen Test- und Produktiv-Betrieb eingegangen werden muss, dann sollte hauptsächlich das Produktivsystem beschrieben werden und das Testsystem als Randnotiz. } -->
 4. Unabhängig vom Ergebnis (erfolgreich, fehlgeschlagen oder ausstehend) wird jeder Zahlungsversuch inklusive des ermittelten Status in der lokalen SQLite-Datenbank gespeichert. Dadurch kann der Betreiber jederzeit den Verlauf aller Transaktionen nachvollziehen – auch bei abgebrochenen oder nicht vollständig durchgeführten Zahlungen.
 
-#### 2.3 Email Quittung
+#### Email Quittung
 
 Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert und versendet (MailKit + SMTP).
 
-### 3. Technologieübersicht
+### Technologieübersicht
 
 | Komponente           | Technologie           |
 | -------------------- | --------------------- |
@@ -46,7 +49,7 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 | Kursdaten            | CoinGecko API         |
 | Unit Tests           | NUnit + Moq           |
 
-### 4. Datenmodell
+### Datenmodell
 
 #### Tabelle: `CompletedOrder`
 
@@ -65,9 +68,9 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 <!-- { @FS: Muss die OrderId nicht besser auch eindeutig sein? } -->
 <!-- { @FS: Nur so aus Neugierde: Die Wallet des "Überweisenden" kriegen wir doch auch raus, oder? } -->
 
-### 5. Verarbeitung & Logik
+### Verarbeitung & Logik
 
-#### 5.1 Zahlungserkennung via Blockchain
+#### Zahlungserkennung via Blockchain
 
 - Es wird regelmäßig die Signaturliste der Wallet abgefragt (`GetSignaturesForAddressAsync`).
 - Danach wird jede Transaktion geprüft:
@@ -75,7 +78,7 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
   - **Memo:** enthält gültige `Order-ID`
   - **Differenz (Delta):** Der erhaltene Betrag wird als Differenz (PostBalance - PreBalance) überprüft
 
-#### 5.2 Datenpersistenz
+#### Datenpersistenz
 
 - Jeder Zahlungsversuch wird unabhängig vom Ergebnis in der SQLite-Datenbank gespeichert – inklusive Zeitstempel, Zahlungsstatus (z. B. ausstehend, bestätigt, fehlgeschlagen) sowie ggf. Transaktionshash.
 - Der Zugriff erfolgt über den Service OrderStorageService, der mittels SQLiteAsyncConnection gekapselt ist und eine strukturierte sowie performante Datenhaltung gewährleistet.
@@ -83,12 +86,12 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 <!-- { @FS: "...der mittels SQLiteAsyncConnection gekapselt ist...": verstehe ich nicht. } -->
 <!-- { @FS: "...und eine strukturierte sowie performante Datenhaltung gewährleistet.": gehört hier nicht hin. } -->
 
-#### 5.3 Quittungsgenerierung
+#### Quittungsgenerierung
 
 - Email wird über `EmailService` mit SMTP-Anbindung verschickt.
 - Inhalte: Bestellübersicht, Preisaufschlüsselung, Steueranteil, Transaktionsdaten.
 
-### 6. Sicherheits- & Fehlerbehandlung
+### Sicherheits- & Fehlerbehandlung
 
 - Fehlerhafte API- oder Blockchain-Abfragen werden durch konsolenbasiertes Logging erfasst, um Debugging im Entwicklungsmodus zu ermöglichen. Für den Endnutzer erfolgt bei kritischen Fehlern (z. B. API-Ausfall) eine visuelle Rückmeldung über die Benutzeroberfläche – etwa durch Warnhinweise oder fallback-basierte Werte.
 - Email-Adressen werden nicht dauerhaft gespeichert, sondern lediglich temporär zur Quittungsübermittlung verwendet. Nach erfolgreichem Versand wird die Adresse verworfen, um die Einhaltung der DSGVO zu gewährleisten.
