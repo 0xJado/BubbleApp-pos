@@ -24,8 +24,15 @@ Die wichtigsten Ergebnisse aus den Tests:
 ### Erkenntnisse & Fehlerbehebung
 
 - **Framework-Konflikte:** .NET Standard 2.1 war inkompatibel mit .NET 9 – Projekt musste auf .NET 8 zurückgesetzt werden. Doppelte `AssemblyInfo`-Einträge führten zu Build-Fehlern und mussten manuell aus der `.csproj` entfernt werden.
+
 - **WaffleService Preislogik:** `TotalPrice` wurde fälschlich in Summe eingerechnet (`Quantity * (Quantity * Preis)`). Test hat dies früh erkannt.
+
 - **Transaktions-API (Solnet):** `Memo` war tiefer im JSON verschachtelt als erwartet – Parsing musste angepasst werden.
+
 - **Manuelle UI Tests:** Layoutprobleme bei Buttons wurden sichtbar (weißer Text auf weißem Button), nach UI-Redesign behoben.
+
 - **Datenbank Cleanup:** Initiale Tests lieferten mehr Datensätze als erwartet – `DeleteAllAsync<T>()` in Setup-Methode eingeführt.
-- **Entwickler-Favorit – Unvollständige QR-Code-Daten durch deutsche Kommas:** Beim ersten Testlauf sah alles perfekt aus – der QR Code war sichtbar, die Wallet-App öffnete sich, aber... keine Daten wurden übergeben. Auch ein Wechsel der Wallet-App half nicht. Die Ursache? Ein unscheinbares Komma! Die Solana URI-Spezifikation verwendet, wie im US-Standard, den Punkt als Dezimaltrenner. Mein Code nutzte jedoch das deutsche Format mit Komma. **Lösung:** `CultureInfo` auf `InvariantCulture` gesetzt – Die Zahlung funktionierte wie vorgesehen.
+	
+#### Entwickler-Favorit – Unvollständige QR-Code-Daten durch deutsche Kommas
+Beim ersten Testlauf sah alles perfekt aus – der QR Code war sichtbar, die Wallet-App öffnete sich, aber... keine Daten wurden übergeben. Auch ein Wechsel der Wallet-App half nicht. Die Ursache? Ein unscheinbares Komma! Die Solana URI-Spezifikation verwendet, wie im US-Standard, den Punkt als Dezimaltrenner. Mein Code nutzte jedoch das deutsche Format mit Komma. 
+**Lösung:** `CultureInfo` auf `InvariantCulture` gesetzt – Die Zahlung funktionierte wie vorgesehen.

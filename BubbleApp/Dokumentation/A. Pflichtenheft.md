@@ -2,8 +2,7 @@
 {#apdx-pflichtenheft}
 ## Pflichtenheft
 
-<!-- { @FS: Hier würde ich noch einleitend darauf hinweisen, dass die Formatierung/Nummerierung des Folgenden nicht dem Original entspricht, weil es hier in die dieses Dokument übernommen wurde. } -->
-<!-- { @FS: Ist das jetzt nur ein Auszug? Wenn ja, auch hier darauf hinweisen! } -->
+**Hinweis:** Die nachfolgende Darstellung des Pflichtenhefts stellt eine vereinfachte und formatierte Version dar, die in diese Projektdokumentation integriert wurde. Nummerierungen, Formatierung und Struktur können vom Originaldokument abweichen. Es handelt sich hierbei um einen repräsentativen Auszug zur Veranschaulichung der zentralen Anforderungen.
 
 **Projekt:** BubbleApp – Mobile Krypto-Bezahlsystem
 **Version:** 1.0  
@@ -115,9 +114,3 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
 Folgende Features sind nicht Teil des MVPs:
 - Keine Datenbank Server (Nur lokale SQLite-Speicherung)
 - Kein CSV Import der Speisekarte
-
-### Fazit
-
-Dieses Pflichtenheft definiert die Anforderungen für die **BubbleApp** als modernes, unabhängiges Krypto-Zahlungssystem für Foodtrucks. Mit **direkter Solana-Zahlung, Echtzeit-Preisberechnung, Blockchain-Transaktionsprüfung und Email-Quittungen** wird eine **effiziente, digitale Bezahlmöglichkeit** geschaffen.
-
-<!-- { @FS: Ein Fazit im Pflichtenheft finde ich immer noch seltsam... } -->
