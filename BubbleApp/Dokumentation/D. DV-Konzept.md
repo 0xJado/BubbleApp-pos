@@ -40,7 +40,7 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 ### Technologieübersicht
 
 | Komponente           | Technologie           |
-| -------------------- | --------------------- |
+| :------------------- | :-------------------- |
 | UI                   | .NET MAUI, XAML       |
 | Logik + MVVM Binding | CommunityToolkit.MVVM |
 | Datenhaltung         | SQLite (local)        |
@@ -55,7 +55,7 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 #### Tabelle: `CompletedOrder`
 
 | Feldname     | Typ      | Beschreibung                             |
-| ------------ | -------- | ---------------------------------------- |
+| :----------- | :------- | :--------------------------------------- |
 | OrderNumber  | Integer  | Autoincrement / eindeutige OrderNummer   |
 | OrderId      | String   | Zufällig generierte ID zur Txn-Zuordnung |
 | ItemsSummary | String   | Kurzbeschreibung der Waffelbestellung    |

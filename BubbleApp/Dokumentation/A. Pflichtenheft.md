@@ -41,7 +41,7 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 ### Anwendungsfälle (Use Cases)
 
 | **Use Case**                  | **Beschreibung**                                                              |
-| ----------------------------- | ----------------------------------------------------------------------------- |
+| :---------------------------- | :---------------------------------------------------------------------------- |
 | **Bestellung aufnehmen**      | Der Betreiber kann eine Waffelbestellung erfassen, bearbeiten und stornieren. |
 | **Preisberechnung**           | Die App berechnet den Gesamtpreis und zeigt ihn in € und SOL an.              |
 | **QR-Code generieren**        | Ein Zahlungs-QR-Code wird basierend auf den Bestelldaten erzeugt.             |
@@ -95,7 +95,7 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
 ### Schnittstellen (APIs, Datenbanken)
 
 | **Schnittstelle**    | **Zweck**                                    |
-| -------------------- | -------------------------------------------- |
+| :------------------- | :------------------------------------------- |
 | **CoinGecko API**    | Abfrage des aktuellen SOL/€-Kurses           |
 | **Solnet API**       | Überprüfung der Blockchain-Transaktion       |
 | **SQLite Datenbank** | Speicherung von Bestellungen & Transaktionen |
@@ -103,7 +103,7 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
 ### Testszenarien & Qualitätssicherung
 
 | **Testfall**          | **Erwartetes Ergebnis**                                  |
-| --------------------- | -------------------------------------------------------- |
+| :-------------------- | :------------------------------------------------------- |
 | Bestellung hinzufügen | Die Waffel erscheint im Warenkorb.                       |
 | QR Code scannen       | Die Solana-Wallet zeigt den richtigen Betrag an.         |
 | Zahlung bestätigen    | Die App erkennt die Transaktion als erfolgreich.         |
