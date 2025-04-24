@@ -49,9 +49,13 @@
 
 {{~
     include "./A. Pflichtenheft.md"
+    include "./B. Use-Case-Diagramm.md"
     include "./C. Aktivitaetsdiagramm.md"
-	include "./D. DV-Konzept.md"
+    include "./D. DV-Konzept.md"
+    include "./F. Tests.md"
+    include "./H. Codeausschnitte.md"
 ~}}
+
 ::::::
 
 {{~
