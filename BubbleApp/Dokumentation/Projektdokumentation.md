@@ -45,14 +45,20 @@
 
 ::::::appendices
 
+{{PageBreak}}
 # Anhang
 
 {{~
     include "./A. Pflichtenheft.md"
+	PageBreak
     include "./B. Use-Case-Diagramm.md"
+	PageBreak
     include "./C. Aktivitaetsdiagramm.md"
+	PageBreak
     include "./D. DV-Konzept.md"
+	PageBreak
     include "./F. Tests.md"
+	PageBreak
     include "./H. Codeausschnitte.md"
 ~}}
 
