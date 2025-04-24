@@ -57,9 +57,13 @@
 	PageBreak
     include "./D. DV-Konzept.md"
 	PageBreak
-    include "./F. Tests.md"
+    include "./F. Entwicklerdokumentation.md"
 	PageBreak
-    include "./H. Codeausschnitte.md"
+	include "./G. Testkonzept.md"
+	PageBreak
+    include "./H. Testdokumentation.md"
+	PageBreak
+	include "./I. Codeausschnitte.md"
 ~}}
 
 ::::::
