@@ -11,6 +11,7 @@ public interface IOrderStorageService
 {
     /// <summary>
     /// Retrieves all completed orders from the database, sorted in descending order by timestamp.
+    /// Depreciated: Kept in case we need to show all orders in a future build.
     /// </summary>
     /// <returns>A list of <see cref="CompletedOrder"/> instances representing all saved orders.</returns>
     Task<List<CompletedOrder>> GetOrdersAsync();
@@ -21,6 +22,15 @@ public interface IOrderStorageService
     /// <param name="order">The order object to be saved.</param>
     /// <returns>An integer representing the number of rows affected.</returns>
     Task<int> SaveOrderAsync(CompletedOrder order);
+    
+    /// <summary>
+    /// Retrieves orders that have either been confirmed or failed.
+    /// </summary>
+    /// <returns>A list of relevant <see cref="CompletedOrder"/> instances.</returns>
+    Task<List<CompletedOrder>> GetRelevantOrdersAsync();
+    
+    Task<int> UpdateOrderStatusAsync(string orderId, string txSignature, PaymentStatus newStatus);
+
 }
 
 /// <summary>
@@ -37,6 +47,8 @@ public class OrderStorageService : IOrderStorageService
     public OrderStorageService(string dbPath)
     {
         _database = new SQLiteAsyncConnection(dbPath);
+        // DROP and recreate the table (dev-only!)
+        //_database.ExecuteAsync("DROP TABLE IF EXISTS CompletedOrder").Wait();
         _database.CreateTableAsync<CompletedOrder>().Wait();
     }
 
@@ -52,10 +64,34 @@ public class OrderStorageService : IOrderStorageService
     }
 
     /// <summary>
+    /// Retrieves only orders with confirmed or failed status, sorted by latest first.
+    /// </summary>
+    public async Task<List<CompletedOrder>> GetRelevantOrdersAsync()
+    {
+        return await _database.Table<CompletedOrder>()
+            .Where(o => o.Status == PaymentStatus.Confirmed || o.Status == PaymentStatus.Failed)
+            .OrderByDescending(o => o.Timestamp)
+            .ToListAsync();
+    }
+
+    /// <summary>
     /// Saves a single <see cref="CompletedOrder"/> to the SQLite database.
     /// </summary>
     /// <param name="order">The order object to persist.</param>
     /// <returns>A task that represents the asynchronous insert operation. The result is the number of inserted rows.</returns>
     public Task<int> SaveOrderAsync(CompletedOrder order) =>
         _database.InsertAsync(order);
+    
+    public async Task<int> UpdateOrderStatusAsync(string orderId, string txSignature, PaymentStatus newStatus)
+    {
+        var order = await _database.Table<CompletedOrder>()
+            .Where(o => o.OrderId == orderId)
+            .FirstOrDefaultAsync();
+
+        if (order is null) return 0;
+
+        order.TxSignature = txSignature;
+        order.Status = newStatus;
+        return await _database.UpdateAsync(order);
+    }
 }

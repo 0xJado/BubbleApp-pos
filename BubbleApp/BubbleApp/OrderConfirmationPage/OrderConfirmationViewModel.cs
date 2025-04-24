@@ -14,9 +14,16 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     [ObservableProperty] private bool _paymentConfirmed;
     [ObservableProperty] private bool _paymentTimedOut;
     [ObservableProperty] private ObservableCollection<BubbleWaffle> _orderedItems;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))] private decimal _euroPrice;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))] private decimal _solanaRate;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShortWalletAddress))] private string _storeWalletAddress;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))]
+    private decimal _euroPrice;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(TotalSol))]
+    private decimal _solanaRate;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShortWalletAddress))]
+    private string _storeWalletAddress;
+
     [ObservableProperty] private ImageSource _qrCodeImage;
     [ObservableProperty] private string _emailAddress;
 
@@ -120,32 +127,34 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         Console.WriteLine("Applying query attributes.");
         IsWaitingForPayment = true;
 
+        var pendingOrder = new CompletedOrder
+        {
+            OrderId = OrderId,
+            ItemsSummary = string.Join(", ", OrderedItems.Select(x => $"{x.Quantity}x {x.WaffleName}")),
+            TotalEur = EuroPrice,
+            TotalSol = TotalSol,
+            Wallet = StoreWalletAddress,
+            Timestamp = DateTime.Now,
+            Status = PaymentStatus.Pending
+        };
+
+        // Save the pending order as soon as the QR is shown
+        await _orderStorageService.SaveOrderAsync(pendingOrder);
+
         try
         {
             var tracker = new TxnTracker();
-            string? txSignature =
-                await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId, TimeSpan.FromMinutes(3));
+            string? txSignature = await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId, TimeSpan.FromMinutes(3));
 
             if (!string.IsNullOrEmpty(txSignature))
             {
                 PaymentConfirmed = true;
 
-                // Builds the order details for local storage
-                var completedOrder = new CompletedOrder
-                {
-                    OrderId = OrderId,
-                    ItemsSummary = string.Join(", ", OrderedItems.Select(x => $"{x.Quantity}x {x.WaffleName}")),
-                    TotalEur = EuroPrice,
-                    TotalSol = TotalSol,
-                    Wallet = StoreWalletAddress,
-                    TxSignature = txSignature,
-                    Timestamp = DateTime.Now
-                };
+                // Update and overwrite the previous pending entry with confirmed status
+                pendingOrder.TxSignature = txSignature;
+                pendingOrder.Status = PaymentStatus.Confirmed;
+                await _orderStorageService.UpdateOrderStatusAsync(OrderId, txSignature, PaymentStatus.Confirmed);
 
-                // Saves to DB immediately after the order is confirmed
-                await _orderStorageService.SaveOrderAsync(completedOrder);
-
-                //Prompts for an email address to send the receipt if the user wants it
                 bool wantsEmail = await Shell.Current.DisplayAlert(
                     "Zahlung erfolgreich",
                     "Möchten Sie eine Quittung per E-Mail erhalten?",
@@ -157,13 +166,17 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
                         "Bitte geben Sie Ihre E-Mail-Adresse ein:");
                     if (!string.IsNullOrWhiteSpace(email))
                     {
-                        await _emailService.SendReceiptAsync(email, completedOrder, OrderedItems.ToList());
+                        await _emailService.SendReceiptAsync(email, pendingOrder, OrderedItems.ToList());
                     }
                 }
             }
             else
             {
                 PaymentTimedOut = true;
+
+                // Update the pending order to Failed
+                pendingOrder.Status = PaymentStatus.Failed;
+                await _orderStorageService.UpdateOrderStatusAsync(OrderId, string.Empty, PaymentStatus.Failed);
             }
         }
         catch (Exception ex)

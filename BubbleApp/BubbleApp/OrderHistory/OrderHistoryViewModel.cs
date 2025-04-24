@@ -38,16 +38,22 @@ namespace BubbleAppNew.OrderHistory
         /// <summary>
         /// Loads the list of completed orders from the database and updates the observable collection.
         /// Orders are sorted by timestamp in descending order to show the latest orders first.
+        /// Loads only confirmed and failed orders from the SQLite database and updates the Orders collection upon Status change.
         /// </summary>
         private async Task LoadOrdersAsync()
         {
             try
             {
                 IsRefreshing = true;
-                var ordersFromDb = await _orderStorageService.GetOrdersAsync();
+                var ordersFromDb = await _orderStorageService.GetRelevantOrdersAsync();
+
+                var filteredOrders = ordersFromDb
+                    .Where(order => order.Status == PaymentStatus.Confirmed || order.Status == PaymentStatus.Failed)
+                    .OrderByDescending(o => o.Timestamp)
+                    .ToList();
 
                 Orders.Clear();
-                foreach (var order in ordersFromDb.OrderByDescending(o => o.Timestamp))
+                foreach (var order in filteredOrders)
                 {
                     Orders.Add(order);
                 }

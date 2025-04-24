@@ -3,6 +3,12 @@ using SQLite;
 
 namespace BubbleLib;
 
+public enum PaymentStatus
+{
+    Pending,        // Offen
+    Confirmed,    // Bestätigt
+    Failed // Fehlgeschlagen
+}
 public class CompletedOrder
 {
     [PrimaryKey, AutoIncrement]
@@ -16,4 +22,7 @@ public class CompletedOrder
     public string Email { get; set; }
     public string TxSignature { get; set; }
     public DateTime Timestamp { get; set; }
+    
+    // New property to track payment status
+    public PaymentStatus Status { get; set; }
 }
