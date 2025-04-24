@@ -4,7 +4,7 @@
 	include "service:kiroku/modules/comments.md"
 
 	info = MakeReport {
-		date: "03. April 2025",
+		date: "09. April 2025",
 		type: "Dokumentation zur betrieblichen Projektarbeit",
 		project: "Erstellung einer Anwendung, die sichere und sofortige Kryptozahlungen vor Ort ermöglicht.",
 
