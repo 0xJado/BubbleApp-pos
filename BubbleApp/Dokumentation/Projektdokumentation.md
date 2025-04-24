@@ -30,6 +30,7 @@
     include "./2. Ausgangssituation.md"
     include "./3. Projektverlauf.md"
 	include "./4. Projektdurchführung.md"
+	include "./5. Fazit.md"
 ~}}
 ::::::
 

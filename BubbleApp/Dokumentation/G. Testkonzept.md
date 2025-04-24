@@ -11,6 +11,7 @@ Dabei wurde besonderer Wert auf die Testbarkeit der Businesslogik gelegt, um kri
 Dieses Testkonzept definiert die Testmethodik, den Ablauf sowie die Zielsetzung der einzelnen Tests und dient als Grundlage für die nachfolgende Testdokumentation.
 
 ### Testfälle
+
 | **Testfall-Nr.** | **Beschreibung**                                                               | **Erwartetes Verhalten**                                                                                   |
 |:-----------------|:-------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------|
 | TC-01            | Hinzufügen eines Standardprodukts zur Bestellung                                | Produkt wird mit korrektem Preis und Menge zur Liste hinzugefügt                                           |
@@ -21,7 +22,7 @@ Dieses Testkonzept definiert die Testmethodik, den Ablauf sowie die Zielsetzung 
 | TC-06            | Abruf aktueller Wechselkurs SOL/EUR von CoinGecko                               | Kurs wird geladen; Fallback wird verwendet bei Fehlschlag                                                  |
 | TC-07            | Datenbankoperation – Speichern einer Bestellung                                 | Bestellung wird in SQLite persistiert                                                                      |
 | TC-08            | Datenbankoperation – Abrufen der Bestellhistorie                                | Daten werden chronologisch korrekt zurückgegeben                                                           |
-| TC-09            | Senden eines Bestellbelegs per Email mit SendGrid                               | Mail wird asynchron versendet; SMTP simuliert über Wrapper                                                 |
+| TC-09            | Senden eines Bestellbelegs per Email mit MailKit                               | Mail wird asynchron versendet; SMTP simuliert über Wrapper                                                 |
 | TC-10            | Transaktionsverfolgung via Solnet – Gültige Memo- und Betragserkennung          | Transaktion wird erkannt, wenn Betrag & Memo korrekt übermittelt                                           |
 | TC-11            | Falsche Formatierung im Solana URI (z. B. Komma statt Punkt)                    | QR Code kann nicht gelesen werden – Fehlerbehandlung greift                                                |
 | TC-12            | Fehlerhafte API-Integration CoinGecko                                           | Fallback-Wert wird gesetzt, Anwendung bleibt nutzbar                                                       |
