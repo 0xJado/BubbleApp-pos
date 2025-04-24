@@ -11,6 +11,7 @@ Die BubbleApp ist eine plattformübergreifende Point-of-Sale (POS) Anwendung, en
 
 Die App ist so konzipiert, dass sie grundlegende Funktionen wie die Erfassung von Bestellungen und die Anzeige der Benutzeroberfläche auch ohne aktive Internetverbindung ausführen kann. Allerdings erfordern bestimmte Funktionen, wie die Verifizierung von Blockchain-Zahlungen und der Versand von E-Mails, eine aktive Internetverbindung. Für den Fall, dass keine Verbindung besteht, implementiert die App Fallback-Mechanismen, wie beispielsweise die Verwendung des zuletzt abgerufenen Wechselkurses von CoinGecko, um die Benutzererfahrung so nahtlos wie möglich zu gestalten.​
 
+<!-- { @FS: Hier nochmal erwähnen, dass der Anwender einen deutlichen Hinweis darauf erhält, wenn keine internetverbindung besteht? } -->
 
 ### 2. Datenflüsse & Funktionsweise
 
@@ -25,6 +26,7 @@ Die App ist so konzipiert, dass sie grundlegende Funktionen wie die Erfassung vo
 1. Nach Auswahl wird automatisch der aktuelle SOL-Kurs über die CoinGecko API abgerufen.
 2. Auf Basis des berechneten Betrags wird ein Zahlungsrequest im Solana URI-Format generiert und als QR-Code dargestellt.
 3. Die Transaktion wird anschließend über das Solana DevNet verfolgt (in der Produktionsumgebung erfolgt der Wechsel auf das MainNet).
+<!-- { @FS: Wenn hier schon auf Unterschiede zwischen Test- und Produktiv-Betrieb eingegangen werden muss, dann sollte hauptsächlich das Produktivsystem beschrieben werden und das Testsystem als Randnotiz. } -->
 4. Unabhängig vom Ergebnis (erfolgreich, fehlgeschlagen oder ausstehend) wird jeder Zahlungsversuch inklusive des ermittelten Status in der lokalen SQLite-Datenbank gespeichert. Dadurch kann der Betreiber jederzeit den Verlauf aller Transaktionen nachvollziehen – auch bei abgebrochenen oder nicht vollständig durchgeführten Zahlungen.
 
 #### 2.3 Email Quittung
@@ -59,6 +61,9 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 | TxSignature  | String   | Blockchain-Transaktionshash              |
 | Timestamp    | DateTime | Zeitpunkt der Bestellung                 |
 
+<!-- { @FS: OrderNumber *und* OrderId? } -->
+<!-- { @FS: Muss die OrderId nicht besser auch eindeutig sein? } -->
+<!-- { @FS: Nur so aus Neugierde: Die Wallet des "Überweisenden" kriegen wir doch auch raus, oder? } -->
 
 ### 5. Verarbeitung & Logik
 
@@ -75,6 +80,8 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 - Jeder Zahlungsversuch wird unabhängig vom Ergebnis in der SQLite-Datenbank gespeichert – inklusive Zeitstempel, Zahlungsstatus (z. B. ausstehend, bestätigt, fehlgeschlagen) sowie ggf. Transaktionshash.
 - Der Zugriff erfolgt über den Service OrderStorageService, der mittels SQLiteAsyncConnection gekapselt ist und eine strukturierte sowie performante Datenhaltung gewährleistet.
 
+<!-- { @FS: "...der mittels SQLiteAsyncConnection gekapselt ist...": verstehe ich nicht. } -->
+<!-- { @FS: "...und eine strukturierte sowie performante Datenhaltung gewährleistet.": gehört hier nicht hin. } -->
 
 #### 5.3 Quittungsgenerierung
 
@@ -90,4 +97,5 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 	- IEmailService / ISmtpClientWrapper: Simulation des Emailversands
 	- IOrderStorageService: Prüfung von Speicher- und Abrufoperationen ohne echte Datenbank
 	- IQrCodeService: Test ohne tatsächliche QR-Code-Generierung
+<!-- { @FS: Bin nicht ganz sicher, ob das hier hingehört. Aber wenn, dann nicht in Vergangenheitsform. Und von "Absicherung" würde ich hier auch nicht sprechen. } -->
 - Alle Transaktionen werden in der lokalen SQLite-Datenbank als eigenständige Einträge gespeichert. Eine Bestellung erzeugt stets einen neuen Datensatz – es erfolgt kein Überschreiben bestehender Einträge, wodurch auch unvollständige oder abgebrochene Transaktionen nachvollzogen werden können.

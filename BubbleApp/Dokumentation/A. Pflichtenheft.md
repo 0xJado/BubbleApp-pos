@@ -1,11 +1,14 @@
 ## Pflichtenheft
 
+<!-- { @FS: Hier würde ich noch einleitend darauf hinweisen, dass die Formatierung/Nummerierung des Folgenden nicht dem Original entspricht, weil es hier in die dieses Dokument übernommen wurde. } -->
+<!-- { @FS: Ist das jetzt nur ein Auszug? Wenn ja, auch hier darauf hinweisen! } -->
+
 **Projekt:** BubbleApp – Mobile Krypto-Bezahlsystem
 **Version:** 1.0  
 **Ersteller:** Anthony Dreibholz-Ortiz  
 **Unternehmen:** idesis GmbH  
 **Betreuer:** Andreas Mersch & Frank Schmidt  
-**Datum:** 21 März 2025
+**Datum:** 21. März 2025
 
 ### Einleitung
 
@@ -71,21 +74,21 @@ Die BubbleApp basiert auf einer dreischichtigen Architektur:
 
 **1. Datenzugriffsschicht**
 
-	- Speicherung von Bestellungen und Transaktionen in einer lokalen SQLite-Datenbank
-	- Zugriff über SQLiteAsyncConnection aus dem SQLite.NET-Paket
-	- Implementierung als eigene Klassenbibliothek basierend auf .NET Standard 2.1
-	- Integration über Dependency Injection in die .NET MAUI Anwendung
+  - Speicherung von Bestellungen und Transaktionen in einer lokalen SQLite-Datenbank
+  - Zugriff über SQLiteAsyncConnection aus dem SQLite.NET-Paket
+  - Implementierung als eigene Klassenbibliothek basierend auf .NET Standard 2.1
+  - Integration über Dependency Injection in die .NET MAUI Anwendung
 
 **2. Geschäftslogikschicht**
 
-   - Zahlungslogik mit Solnet-Bibliothek
-   - Echtzeit-Preisabfrage über die CoinGecko API
-   - Berechnung des Gesamtpreises in € und SOL
+  - Zahlungslogik mit Solnet-Bibliothek
+  - Echtzeit-Preisabfrage über die CoinGecko API
+  - Berechnung des Gesamtpreises in € und SOL
 
 **3. Präsentationsschicht**
 
-   - Benutzeroberfläche mit .NET MAUI
-   - MVVM-Architektur für saubere Trennung von UI und Logik
+  - Benutzeroberfläche mit .NET MAUI
+  - MVVM-Architektur für saubere Trennung von UI und Logik
 
 ### Schnittstellen (APIs, Datenbanken)
 
@@ -114,3 +117,5 @@ Folgende Features sind nicht Teil des MVPs:
 ### Fazit
 
 Dieses Pflichtenheft definiert die Anforderungen für die **BubbleApp** als modernes, unabhängiges Krypto-Zahlungssystem für Foodtrucks. Mit **direkter Solana-Zahlung, Echtzeit-Preisberechnung, Blockchain-Transaktionsprüfung und Email-Quittungen** wird eine **effiziente, digitale Bezahlmöglichkeit** geschaffen.
+
+<!-- { @FS: Ein Fazit im Pflichtenheft finde ich immer noch seltsam... } -->
