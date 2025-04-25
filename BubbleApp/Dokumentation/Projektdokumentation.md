@@ -13,7 +13,7 @@
 		company: "idesis GmbH",
 		email: "jado@idesis.de",
 
-		watermark: "Entwurf",
+		#watermark: "Entwurf",
 	}
 	info.title = "Dokumentation zur betrieblichen Projektarbeit"
 
@@ -25,6 +25,7 @@
 ~}}
 
 ::::::chapters
+
 {{~
     include "./1. Einleitung.md"
     include "./2. Ausgangssituation.md"
@@ -32,6 +33,7 @@
 	include "./4. Projektdurchführung.md"
 	include "./5. Fazit.md"
 ~}}
+
 ::::::
 
 <style>
@@ -58,7 +60,7 @@
 	PageBreak
     include "./D. DV-Konzept.md"
 	PageBreak
-	include "./E. Bubble UI.md"
+	include "./E. BubbleApp UI.md"
 	PageBreak
     include "./F. Entwicklerdokumentation.md"
 	PageBreak

@@ -3,12 +3,12 @@
 
 Diese Übersicht zeigt den Bestell- und Zahlungsablauf der BubbleApp anhand verschiedener Screenshots und Mockups. Gezeigt wird dabei sowohl die geplante zukünftige Benutzeroberfläche als auch frühere Entwürfe und das aktuelle MVP-Design. Ziel ist es, die Nutzerführung, die Produktauswahl und die Integration von Blockchain-basierten Zahlungen möglichst nachvollziehbar darzustellen – vom ersten Klick bis zur erfolgreichen Transaktion.
 
-###Zukünftiges Home View (Mockup)
+### Zukünftiges Home View (Mockup)
 
 Die Startansicht der App im finalen Designentwurf präsentiert das Produktsortiment mit klaren Bildern und Preisen. Nutzer können hier ihre Auswahl treffen, Mengen anpassen und Produkte direkt zum Warenkorb hinzufügen. Das Menü auf der linken Seite ermöglicht schnellen Zugriff auf Warenkorb, Bestellverlauf, Einstellungen etc.
 
 {{~
-    futuremockup = temp_file.load_and_link "D1. FutureMockup.png"
+    futuremockup = temp_file.load_and_link "E1. FutureMockup.png"
 ~}}
 [futuremockup]: {{futuremockup}}  "Future Home View"
 ![][futuremockup]{style="width:100%;"}
