@@ -28,6 +28,8 @@ Mobile Foodtrucks haben oft keine effiziente Möglichkeit, Kryptozahlungen entge
 
 Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodtruck-Betreibern ermöglicht, Zahlungen direkt in Solana (SOL) zu akzeptieren, ohne zentralisierte Finanzplattformen oder andere Intermediäre zu benötigen.
 
+{{PageBreak}}
+
 **Kernfunktionen:**
 
 - **Bestellmanagement**: Der Betreiber kann über eine einfache Benutzeroberfläche Bestellungen aufnehmen und verwalten.
@@ -66,6 +68,7 @@ Mit der BubbleApp wird ein unabhängiges Zahlungssystem entwickelt, das es Foodt
 
 - **Benutzerfreundlichkeit**: Die App muss einfach und intuitiv zu bedienen sein.
 - **Leistungsfähigkeit**: Alle Berechnungen und Transaktionen sollten in Echtzeit durchgeführt werden.
+{{PageBreak}}
 - **Datenschutz**: Keine Speicherung sensibler Kundendaten (DSGVO-konform).
 - **Plattformübergreifend**: Die Anwendung läuft unter .NET MAUI (iOS & Android).
 

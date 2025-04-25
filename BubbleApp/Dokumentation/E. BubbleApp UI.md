@@ -23,6 +23,8 @@ Diese vereinfachte Version des Home View diente als Grundlage für das visuelle 
 [earlywireframe]: {{earlywireframe}}  "Home View Basis"
 ![][earlywireframe]{style="width:100%;"}
 
+{{PageBreak}}
+
 ### Main Page View (aktuelle MVP-Ansicht)
 
 Die Hauptansicht der MVP-Version erlaubt die Auswahl und Anpassung von Produkten über intuitive Plus- und Minus-Buttons. Die aktuelle Bestellung wird in Echtzeit auf der rechten Seite angezeigt, inklusive Summenberechnung in Euro und SOL. Über einen Button kann ein QR-Code zur Zahlung generiert werden. Die Wechselkurse werden dynamisch über die CoinGecko API bezogen.
@@ -33,6 +35,8 @@ Die Hauptansicht der MVP-Version erlaubt die Auswahl und Anpassung von Produkten
 [mainpage]: {{mainpage}}  "Main Page View"
 ![][mainpage]{style="width:100%;"}
 
+{{PageBreak}}
+
 ### Create Your Own Moment (Live-Funktion im MVP)
 Während des Bestellvorgangs können Nutzer individuelle „Moments“ definieren, indem ein Name und ein Preis eingegeben werden. Die so erstellten Produkte lassen sich direkt in die aktuelle Bestellung integrieren und erweitern das Menü flexibel um personalisierte Artikel.
 
@@ -41,6 +45,8 @@ Während des Bestellvorgangs können Nutzer individuelle „Moments“ definiere
 ~}}
 [cyom]: {{cyom}}  "Create Your Own Moment"
 ![][cyom]{style="width:100%;"}
+
+{{PageBreak}}
 
 ### Order Confirmation Page (Warten auf Zahlung)
 Diese Ansicht zeigt die finale Bestellübersicht sowie einen generierten QR-Code, der alle nötigen Transaktionsdaten enthält. Die BubbleApp wartet in diesem Zustand aktiv auf den Eingang der Zahlung und zeigt visuell an, dass noch keine Bestätigung erfolgt ist.
@@ -51,6 +57,8 @@ Diese Ansicht zeigt die finale Bestellübersicht sowie einen generierten QR-Code
 [ocp]: {{ocp}}  "Order Confirmation Page"
 ![][ocp]{style="width:100%;"}
 
+{{PageBreak}}
+
 ### Zahlung mit Bestätigung (Email Prompt)
 Bei erfolgreicher Transaktion erscheint eine Bestätigung mit der Option, eine Quittung per E-Mail zu erhalten.
 
@@ -59,6 +67,8 @@ Bei erfolgreicher Transaktion erscheint eine Bestätigung mit der Option, eine Q
 ~}}
 [emailfrage]: {{emailfrage}}  "Bezahlung Bestätigt"
 ![][emailfrage]{style="width:100%;"}
+
+{{PageBreak}}
 
 ### Bestellverlauf (Order History)
 Diese Ansicht zeigt eine chronologische Übersicht aller bisherigen Bestellungen mit Bestell-ID, Artikelliste, Betrag in Euro und SOL sowie dem Transaktionsstatus. Farblich hervorgehobene Statusanzeigen („Confirmed“ oder „Failed“) und die Anzeige des Transaktions-Hash ermöglichen eine transparente Nachverfolgung der Zahlungen.

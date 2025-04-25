@@ -60,6 +60,8 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 | TxSignature  | String   | Blockchain-Transaktionshash              |
 | Timestamp    | DateTime | Zeitpunkt der Bestellung                 |
 
+{{PageBreak}}
+
 ### Verarbeitung & Logik
 
 #### Zahlungserkennung via Blockchain
