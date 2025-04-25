@@ -58,6 +58,8 @@
 	PageBreak
     include "./D. DV-Konzept.md"
 	PageBreak
+	include "./E. Bubble UI.md"
+	PageBreak
     include "./F. Entwicklerdokumentation.md"
 	PageBreak
 	include "./G. Testkonzept.md"
