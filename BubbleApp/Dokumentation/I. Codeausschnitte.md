@@ -12,7 +12,7 @@ using Solnet.Rpc.Models;
 using System.Diagnostics;
 using Solnet.Rpc.Core.Http;
 
-namespace BubbleAppNew;
+namespace BubbleApp;
 
 /// <summary>
 /// Tracks transactions on the Solana blockchain to detect a finalized payment
@@ -26,33 +26,53 @@ public class TxnTracker
     /// <summary>
     /// Initializes the transaction tracker with a Solana DevNet RPC client.
     /// </summary>
-    /// <param name="rpcClient">The Rpc Client to reach the Solana blockchain.</param>
+    /// <param name="rpcClient">
+    /// The Rpc Client to reach the Solana blockchain.
+    /// </param>
     public TxnTracker(IRpcClient rpcClient)
     {
-		// Die Kommunikation mit der Solana Blockchain erfolgt über den RpcClient aus der Solnet Bibliothek.
-		// Dependency injection ist verantwortlich ein konkrete Instanz bereitzustellen.
+        // Die Kommunikation mit der Solana Blockchain erfolgt über den
+        // IRpcClient aus der Solnet Bibliothek.
+        // Dependency injection ist verantwortlich eine konkrete Instanz
+        // bereitzustellen.
         _rpcClient = rpcClient;
     }
 
     /// <summary>
-    /// Asynchronously waits for a confirmed transaction on the blockchain that matches the expected memo and lamport value.
+    /// Asynchronously waits for a confirmed transaction on the blockchain that
+    /// matches the expected memo and lamport value.
     /// </summary>
     /// <param name="walletAddress">The public key of the recipient wallet.</param>
     /// <param name="expectedSol">The expected transaction amount in SOL.</param>
-    /// <param name="orderId">The unique order identifier used in the transaction memo.</param>
-    /// <param name="timeout">The maximum duration to wait for a matching transaction.</param>
-    /// <returns>The signature of the matching transaction, or null if no match is found within the timeout period.</returns>
-    public async Task<string?> WaitForPaymentAsync(string walletAddress, decimal expectedSol, string orderId, TimeSpan timeout)
+    /// <param name="orderId">
+    /// The unique order identifier used in the transaction memo.
+    /// </param>
+    /// <param name="timeout">
+    /// The maximum duration to wait for a matching transaction.
+    /// </param>
+    /// <returns>
+    /// The signature of the matching transaction, or null if no match is found
+    /// within the timeout period.
+    /// </returns>
+    public async Task<string?> WaitForPaymentAsync(
+        string walletAddress,
+        decimal expectedSol,
+        string orderId,
+        TimeSpan timeout)
     {
         var stopwatch = Stopwatch.StartNew();
         ulong expectedLamports = (ulong)(expectedSol * LAMPORTS_PER_SOL);
         string expectedMemo = $"Order-{orderId}";
 
-        Console.WriteLine($"Waiting for transaction with Order ID '{expectedMemo}' and {expectedLamports} lamports...");
+        Console.WriteLine(
+            $"Waiting for transaction with Order ID '{expectedMemo}' " +
+            $"and {expectedLamports} lamports...");
 
         while (stopwatch.Elapsed < timeout)
         {
-            var sigResult = await _rpcClient.GetSignaturesForAddressAsync(walletAddress, limit: 10);
+            var sigResult = await _rpcClient.GetSignaturesForAddressAsync(
+                                                walletAddress,
+                                                limit: 10);
 
             if (!sigResult.WasSuccessful || sigResult.Result == null)
             {
@@ -60,21 +80,29 @@ public class TxnTracker
                 continue;
             }
 
-            foreach (var sigInfo in GetFinalizedSignaturesWithExpectedOrderId(sigResult.Result, expectedMemo))
+            foreach (var sigInfo in GetFinalizedSignaturesWithExpectedOrderId(
+                                        sigResult.Result,
+                                        expectedMemo))
             {
                 var tx = await _rpcClient.GetTransactionAsync(sigInfo.Signature);
 
                 if (IsRequestResultRelevant(tx))
                     continue;
 
-                if (!TryGetLamportAmount(tx.Result, walletAddress, out var lamportAmount)) 
+                if (!TryGetLamportAmount(tx.Result,
+                                         walletAddress,
+                                         out var lamportAmount)) 
                     continue;
 
-                Console.WriteLine($"Transaction {sigInfo.Signature} has lamport amount: {lamportAmount}");
+                Console.WriteLine(
+                    $"Transaction {sigInfo.Signature} has lamport amount: " +
+                    $"{lamportAmount}");
 
                 if (lamportAmount >= expectedLamports)
                 {
-                    Console.WriteLine($"Payment confirmed for Order-{orderId}. Tx: {sigInfo.Signature}");
+                    Console.WriteLine(
+                        $"Payment confirmed for Order-{orderId}. " + 
+                        $"Tx: {sigInfo.Signature}");
                     return sigInfo.Signature;
                 }
             }
@@ -92,13 +120,18 @@ public class TxnTracker
     /// <param name="transactionMetadata">The transactions Metadata.</param>
     /// <param name="walletAddress">The Owner's Wallet Address.</param>
     /// <param name="amount">The amount of Solana (Lamports).</param>
-    /// <returns>If the amount is found, then returns true, otherwise, false.</returns>
-    private static bool TryGetLamportAmount(TransactionMetaSlotInfo transactionMetadata, string walletAddress,
+    /// <returns>
+    /// If the amount is found, then returns true, otherwise, false.
+    /// </returns>
+    private static bool TryGetLamportAmount(
+        TransactionMetaSlotInfo transactionMetadata,
+        string walletAddress,
         out ulong amount)
     {
         amount = 0;
-        // Get Solana value is not supported in the current version of Solnet, Delta is used instead because the
-        // Pre- and Postbalances can be extracted natively from the blockchain. This is adequate for the MVP.
+        // Get Solana value is not supported in the current version of Solnet,
+        // Delta is used instead because the Pre- and Postbalances can be extracted
+        // natively from the blockchain. This is adequate for the MVP.
         var keys = transactionMetadata.Transaction.Message.AccountKeys;
         var index = Array.IndexOf(keys, walletAddress);
         if (index == -1) 
@@ -111,29 +144,43 @@ public class TxnTracker
     }
 
     /// <summary>
-    /// Checks if the transaction is relevant by verifying if it was successful and if there are any errors in the metadata.
+    /// Checks if the transaction is relevant by verifying if it was successful and
+    /// if there are any errors in the metadata.
     /// </summary>
     /// <param name="tx">Metadata of the RequestResult.</param>
     /// <returns>True if the Result is relevant, otherwise, false.</returns>
-    private static bool IsRequestResultRelevant(RequestResult<TransactionMetaSlotInfo> tx)
+    private static bool IsRequestResultRelevant(
+        RequestResult<TransactionMetaSlotInfo> tx)
     {
-        return !tx.WasSuccessful || tx.Result?.Transaction == null || tx.Result.Meta?.Error != null;
+        return !tx.WasSuccessful
+               || tx.Result?.Transaction == null
+               || tx.Result.Meta?.Error != null;
     }
 
     /// <summary>
-    /// Filters the transaction signatures to only include finalized entries with the specified memo.
+    /// Filters the transaction signatures to only include finalized entries with the
+    /// specified memo.
     /// </summary>
-    /// <param name="signatureInfos">The list of signature status information objects.</param>
-    /// <param name="expectedOrderId">The expected memo string to match against.</param>
+    /// <param name="signatureInfos">
+    /// The list of signature status information objects.
+    /// </param>
+    /// <param name="expectedOrderId">
+    /// The expected memo string to match against.
+    /// </param>
     /// <returns>Filtered enumerable of matching signature status entries.</returns>
-    private static IEnumerable<SignatureStatusInfo> GetFinalizedSignaturesWithExpectedOrderId(
-        List<SignatureStatusInfo> signatureInfos,
-        string expectedOrderId)
+    private static IEnumerable<SignatureStatusInfo>
+        GetFinalizedSignaturesWithExpectedOrderId(
+            List<SignatureStatusInfo> signatureInfos,
+            string expectedOrderId)
     {
         // Pre-filter by memo and confirmation status to reduce load
         return signatureInfos.Where(sig =>
-            (sig.Memo?.Contains(expectedOrderId, StringComparison.OrdinalIgnoreCase) ?? false) &&
-            sig.ConfirmationStatus == "finalized");
+        {
+            (sig.Memo?.Contains(
+                            expectedOrderId,
+                            StringComparison.OrdinalIgnoreCase) ?? false)
+            && sig.ConfirmationStatus == "finalized"
+        });
     }
 }
 ```

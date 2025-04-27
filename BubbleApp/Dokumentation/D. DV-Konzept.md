@@ -26,7 +26,7 @@ Die App ist so konzipiert, dass sie grundlegende Funktionen wie die Erfassung vo
 
 1. Nach Auswahl wird automatisch der aktuelle SOL-Kurs über die CoinGecko API abgerufen.
 2. Auf Basis des berechneten Betrags wird ein Zahlungsrequest im Solana URI-Format generiert und als QR-Code dargestellt.
-3. Die Transaktion wird anschließend über das Solana MainNet verfolgt (in der Testumgebung erfolgt der Wechsel auf das DevNet).
+3. Die Transaktion wird anschließend über das Solana MainNet verfolgt (in der Testumgebung erfolgt ein Wechsel auf das DevNet).
 4. Unabhängig vom Ergebnis (erfolgreich, fehlgeschlagen oder ausstehend) wird jeder Zahlungsversuch inklusive des ermittelten Status in der lokalen SQLite-Datenbank gespeichert. Dadurch kann der Betreiber jederzeit den Verlauf aller Transaktionen nachvollziehen – auch bei abgebrochenen oder nicht vollständig durchgeführten Zahlungen.
 
 #### Email Quittung
@@ -60,6 +60,8 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 | TxSignature  | String   | Blockchain-Transaktionshash              |
 | Timestamp    | DateTime | Zeitpunkt der Bestellung                 |
 
+{{PageBreak}}
+
 ### Verarbeitung & Logik
 
 #### Zahlungserkennung via Blockchain
@@ -83,7 +85,7 @@ Optional wird nach erfolgreicher Zahlung eine **Email mit Quittung** generiert u
 
 - Fehlerhafte API- oder Blockchain-Abfragen werden durch konsolenbasiertes Logging erfasst, um Debugging im Entwicklungsmodus zu ermöglichen. Für den Endnutzer erfolgt bei kritischen Fehlern (z. B. API-Ausfall) eine visuelle Rückmeldung über die Benutzeroberfläche – etwa durch Warnhinweise oder fallback-basierte Werte.
 - Email-Adressen werden nicht dauerhaft gespeichert, sondern lediglich temporär zur Quittungsübermittlung verwendet. Nach erfolgreichem Versand wird die Adresse verworfen, um die Einhaltung der DSGVO zu gewährleisten.
-- Um die richtige Funktionsweise der Anwendung sicherzustellen werden Unit Tests mit NUnit durchgeführt. Dabei kommen gezielte Mocks mittels Moq zum Einsatz, insbesondere für schwer testbare oder externe Komponenten wie:
+- Um die richtige Funktionsweise der Anwendung sicherzustellen werden Unit Tests mit NUnit durchgeführt. Dabei kommen gezielte Mocks mittels Moq zum Einsatz, insbesondere für externe Abhängigkeiten in Komponenten wie:
 	- ICoinGeckoService: Rückgabe eines kontrollierten Wechselkurses
 	- IEmailService / ISmtpClientWrapper: Simulation des Emailversands
 	- IOrderStorageService: Prüfung von Speicher- und Abrufoperationen ohne echte Datenbank
