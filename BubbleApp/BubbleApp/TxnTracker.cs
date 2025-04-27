@@ -1,24 +1,31 @@
 using Solnet.Rpc;
 using Solnet.Rpc.Models;
 using System.Diagnostics;
+using Solnet.Rpc.Core.Http;
 
 namespace BubbleAppNew;
+
+public interface ITxnTracker
+{
+    Task<string?> WaitForPaymentAsync(string walletAddress, decimal expectedSol, string orderId, TimeSpan timeout);
+}
 
 /// <summary>
 /// Tracks transactions on the Solana blockchain to detect a finalized payment
 /// with a matching order ID (used as memo) and the expected SOL amount.
 /// </summary>
-public class TxnTracker
+public class TxnTracker : ITxnTracker
 {
     private readonly IRpcClient _rpcClient;
+    private const decimal LAMPORTS_PER_SOL = 1_000_000_000m;
 
     /// <summary>
     /// Initializes the transaction tracker with a Solana DevNet RPC client.
     /// </summary>
-    public TxnTracker()
+    /// <param name="rpcClient">The Rpc Client to reach the Solana blockchain.</param>
+    public TxnTracker(IRpcClient rpcClient)
     {
-        // Uses DevNet for testing; for production, switch to MainNet.
-        _rpcClient = ClientFactory.GetClient(Cluster.DevNet);
+        _rpcClient = rpcClient;
     }
 
     /// <summary>
@@ -32,7 +39,7 @@ public class TxnTracker
     public async Task<string?> WaitForPaymentAsync(string walletAddress, decimal expectedSol, string orderId, TimeSpan timeout)
     {
         var stopwatch = Stopwatch.StartNew();
-        ulong expectedLamports = (ulong)(expectedSol * 1_000_000_000m);
+        ulong expectedLamports = (ulong)(expectedSol * LAMPORTS_PER_SOL);
         string expectedMemo = $"Order-{orderId}";
 
         Console.WriteLine($"Waiting for transaction with Order ID '{expectedMemo}' and {expectedLamports} lamports...");
@@ -51,20 +58,15 @@ public class TxnTracker
             {
                 var tx = await _rpcClient.GetTransactionAsync(sigInfo.Signature);
 
-                if (!tx.WasSuccessful || tx.Result?.Transaction == null || tx.Result.Meta?.Error != null)
+                if (IsRequestResultRelevant(tx))
                     continue;
 
-                var keys = tx.Result.Transaction.Message.AccountKeys;
-                var index = Array.IndexOf(keys, walletAddress);
-                if (index == -1) continue;
+                if (!TryGetLamportAmount(tx.Result, walletAddress, out var lamportAmount)) 
+                    continue;
 
-                var pre = tx.Result.Meta.PreBalances[index];
-                var post = tx.Result.Meta.PostBalances[index];
-                var delta = post - pre;
+                Console.WriteLine($"Transaction {sigInfo.Signature} has lamport amount: {lamportAmount}");
 
-                Console.WriteLine($"Transaction {sigInfo.Signature} has lamport delta: {delta}");
-
-                if (delta >= expectedLamports)
+                if (lamportAmount >= expectedLamports)
                 {
                     Console.WriteLine($"Payment confirmed for Order-{orderId}. Tx: {sigInfo.Signature}");
                     return sigInfo.Signature;
@@ -76,6 +78,40 @@ public class TxnTracker
 
         Console.WriteLine("No matching transaction found within timeout.");
         return null;
+    }
+
+    /// <summary>
+    /// Tries to get the lamport amount from the transaction metadata.
+    /// </summary>
+    /// <param name="transactionMetadata">The transactions Metadata.</param>
+    /// <param name="walletAddress">The Owner's Wallet Address.</param>
+    /// <param name="amount">The amount of Solana (Lamports).</param>
+    /// <returns>If the amount is found, then returns true, otherwise, false.</returns>
+    private static bool TryGetLamportAmount(TransactionMetaSlotInfo transactionMetadata, string walletAddress,
+        out ulong amount)
+    {
+        amount = 0;
+        // Get Solana value is not supported in the current version of Solnet, Delta is used instead because the
+        // Pre- and Postbalances can be extracted natively from the blockchain. This is adequate for the MVP.
+        var keys = transactionMetadata.Transaction.Message.AccountKeys;
+        var index = Array.IndexOf(keys, walletAddress);
+        if (index == -1) 
+            return false;
+
+        var pre = transactionMetadata.Meta.PreBalances[index];
+        var post = transactionMetadata.Meta.PostBalances[index];
+        amount = post - pre;
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the transaction is relevant by verifying if it was successful and if there are any errors in the metadata.
+    /// </summary>
+    /// <param name="tx">Metadata of the RequestResult.</param>
+    /// <returns>True if the Result is relevant, otherwise, false.</returns>
+    private static bool IsRequestResultRelevant(RequestResult<TransactionMetaSlotInfo> tx)
+    {
+        return !tx.WasSuccessful || tx.Result?.Transaction == null || tx.Result.Meta?.Error != null;
     }
 
     /// <summary>

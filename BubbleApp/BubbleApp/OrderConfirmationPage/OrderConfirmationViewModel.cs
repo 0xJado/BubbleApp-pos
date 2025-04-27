@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using BubbleLib;
+using Solnet.Rpc;
 
 namespace BubbleAppNew.OrderConfirmationPage;
 
@@ -48,6 +49,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     private readonly IOrderStorageService _orderStorageService;
     private readonly IWaffleService _waffleService;
     private readonly IEmailService _emailService;
+    private readonly ITxnTracker _txnTracker;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderConfirmationViewModel"/> class.
@@ -66,7 +68,8 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         string storeWalletAddress,
         IOrderStorageService orderStorageService,
         IWaffleService waffleService,
-        IEmailService emailService)
+        IEmailService emailService,
+        ITxnTracker txnTracker)
     {
         OrderedItems = orderedItems;
         EuroPrice = euroPrice;
@@ -77,6 +80,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
         _orderStorageService = orderStorageService;
         _waffleService = waffleService;
         _emailService = emailService;
+        _txnTracker = txnTracker;
     }
 
     /// <summary>
@@ -143,8 +147,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
 
         try
         {
-            var tracker = new TxnTracker();
-            string? txSignature = await tracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId, TimeSpan.FromMinutes(3));
+            string? txSignature = await _txnTracker.WaitForPaymentAsync(StoreWalletAddress, TotalSol, OrderId, TimeSpan.FromMinutes(3));
 
             if (!string.IsNullOrEmpty(txSignature))
             {

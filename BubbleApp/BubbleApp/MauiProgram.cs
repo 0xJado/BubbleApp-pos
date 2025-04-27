@@ -4,6 +4,7 @@ using BubbleWaffleViewModel = BubbleAppNew.MainPage.BubbleWaffleViewModel;
 using BubbleAppNew.OrderConfirmationPage;
 using BubbleAppNew.OrderHistory;
 using BubbleLib;
+using Solnet.Rpc;
 
 namespace BubbleAppNew;
 public static class MauiProgram
@@ -37,6 +38,13 @@ public static class MauiProgram
         });
         builder.Services.AddSingleton<IEmailService, EmailService>();
         builder.Services.AddSingleton<ISmtpClientWrapper, SmtpClientWrapper>();
+        builder.Services.AddSingleton<IRpcClient>(s =>
+        {
+            // Uses DevNet for testing; for production, switch to MainNet.
+            var rpcClient = ClientFactory.GetClient(Cluster.DevNet);
+            return rpcClient;
+        });builder.Services.AddSingleton<ITxnTracker, TxnTracker>();
+
         
         return builder.Build();
     }
