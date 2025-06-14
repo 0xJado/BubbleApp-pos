@@ -14,6 +14,14 @@ public class CoinGeckoServiceTests
         }
     }
     """;
+    
+    private const string CachedCoinGeckoMockResponse = """
+    {
+        "solana": {
+            "eur": 120.00
+        }
+    }
+    """;
 
     [Test]
     public async Task SuccessfulSolanaEuroExchangeRate()
@@ -46,14 +54,22 @@ public class CoinGeckoServiceTests
     [Test]
     public async Task ExchangeRateApiErrorFallback()
     {
-        // Arrange: simulate a failing API
+        // Arrange: simulate a failure on the second call for cache
         var handlerMock = new Mock<HttpMessageHandler>();
+
         handlerMock.Protected()
-            .Setup<Task<HttpResponseMessage>>(
+            .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>()
             )
+            // First call succeeds
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(CachedCoinGeckoMockResponse)
+            })
+            // Second call fails
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.InternalServerError
@@ -63,7 +79,8 @@ public class CoinGeckoServiceTests
         var service = new CoinGeckoService(httpClient);
 
         // Act
-        var result = await service.GetSolanaEuroExchangeRateAsync();
+        var _ = await service.GetSolanaEuroExchangeRateAsync(); // primes cache with 120.00
+        var result = await service.GetSolanaEuroExchangeRateAsync(); // uses fallback
 
         // Assert
         Assert.That(result, Is.EqualTo(120.00m));
