@@ -1,0 +1,25 @@
+# .NET build output and local IDE state
+**/bin/
+**/obj/
+.vs/
+**/.idea/
+*.user
+*.suo
+TestResults/
+**/TestResults/
+*.coverage
+*.coveragexml
+# Local SDKs, caches, and credentials
+.dotnet/
+.dotnet-cli-home/
+.nuget/
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+*.db
+*.db3
+*.sqlite
+*.sqlite3

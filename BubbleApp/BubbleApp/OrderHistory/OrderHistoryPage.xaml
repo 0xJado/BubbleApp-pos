@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    Title="Bestellverlauf"
+    x:Class="BubbleAppNew.OrderHistory.OrderHistoryPage"
+    x:DataType="local:OrderHistoryViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bubbleLib="clr-namespace:BubbleLib;assembly=BubbleLib"
+    xmlns:local="clr-namespace:BubbleAppNew.OrderHistory"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <CollectionView ItemsSource="{Binding Orders}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="bubbleLib:CompletedOrder">
+                <Frame
+                    BackgroundColor="White"
+                    BorderColor="Gray"
+                    CornerRadius="8"
+                    HasShadow="True"
+                    Margin="10"
+                    Padding="10">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <!--  Left Side: Order Details  -->
+                        <VerticalStackLayout Grid.Column="0" Spacing="5">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="{Binding OrderNumber, StringFormat='Order #{0}'}"
+                                TextColor="DarkBlue" />
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                Text="{Binding OrderId, StringFormat='Bestell-ID: {0}'}" />
+                            <Label FontSize="16" Text="{Binding ItemsSummary}" />
+                            <Label FontSize="16" Text="{Binding TotalEur, StringFormat='Gesamtsumme in EUR: {0:F2}'}" />
+                            <Label FontSize="16" Text="{Binding TotalSol, StringFormat='Gesamt in SOL: {0:F3}'}" />
+                            <Label
+                                FontSize="14"
+                                Text="{Binding Timestamp, StringFormat='Datum: {0:dd.MM.yyyy HH:mm}'}"
+                                TextColor="Gray" />
+                            <Label
+                                FontSize="12"
+                                LineBreakMode="CharacterWrap"
+                                MaxLines="2"
+                                Text="{Binding TxSignature, StringFormat='Tx Hash: {0}'}"
+                                TextColor="DimGray" />
+                        </VerticalStackLayout>
+
+                        <!--  Right Side: Status  -->
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Padding="20"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="Status:" />
+                            <Label FontSize="14" Text="{Binding Status}">
+                                <Label.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Status}"
+                                        TargetType="Label"
+                                        Value="Confirmed">
+                                        <Setter Property="TextColor" Value="Green" />
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        Binding="{Binding Status}"
+                                        TargetType="Label"
+                                        Value="Failed">
+                                        <Setter Property="TextColor" Value="Red" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>

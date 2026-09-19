@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleApp", "BubbleApp\BubbleApp.csproj", "{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleLib", "BubbleLib\BubbleLib.csproj", "{FE5DA4F4-6FAA-41C1-82AD-3123D96CE256}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BC234706-0092-4738-B8A4-5A407F81C894}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{899BD856-D420-431B-801F-44C1F36B585F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDB4FFF7-7C8E-4ACD-BC6F-C1B4E1E73C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE5DA4F4-6FAA-41C1-82AD-3123D96CE256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5DA4F4-6FAA-41C1-82AD-3123D96CE256}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5DA4F4-6FAA-41C1-82AD-3123D96CE256}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE5DA4F4-6FAA-41C1-82AD-3123D96CE256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{899BD856-D420-431B-801F-44C1F36B585F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{899BD856-D420-431B-801F-44C1F36B585F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{899BD856-D420-431B-801F-44C1F36B585F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{899BD856-D420-431B-801F-44C1F36B585F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{899BD856-D420-431B-801F-44C1F36B585F} = {BC234706-0092-4738-B8A4-5A407F81C894}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,208 @@
+<ContentPage
+    BackgroundColor="Wheat"
+    Title="Review and Pay"
+    x:Class="BubbleAppNew.OrderConfirmationPage.OrderPage"
+    x:DataType="orderConfirmationPage:OrderConfirmationViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bubbleLib="clr-namespace:BubbleLib;assembly=BubbleLib"
+    xmlns:orderConfirmationPage="clr-namespace:BubbleAppNew.OrderConfirmationPage"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding NewTransactionCommand}"
+            Order="Primary"
+            Priority="0"
+            Text="Neue Bestellung" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid Padding="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.45*" />
+                <ColumnDefinition Width="0.55*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Left Column: Order Summary  -->
+            <VerticalStackLayout
+                Grid.Column="0"
+                Padding="15"
+                Spacing="15"
+                VerticalOptions="Start">
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="24"
+                    HorizontalOptions="Start"
+                    Text="Bestellung"
+                    TextColor="Black" />
+
+                <Label
+                    FontSize="12"
+                    Text="{Binding OrderId, StringFormat='Order ID: {0}'}"
+                    TextColor="Gray" />
+
+                <Frame
+                    BackgroundColor="White"
+                    BorderColor="#CCCCCC"
+                    CornerRadius="12"
+                    HasShadow="True"
+                    Padding="10">
+
+                    <CollectionView HeightRequest="300" ItemsSource="{Binding OrderedItems}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="bubbleLib:BubbleWaffle">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Padding="5,2">
+                                    <Label
+                                        FontSize="22"
+                                        Grid.Column="0"
+                                        Padding="8,0"
+                                        Text="{Binding Quantity, StringFormat='{0}x'}"
+                                        TextColor="Black" />
+                                    <Label
+                                        FontSize="22"
+                                        Grid.Column="1"
+                                        Text="{Binding WaffleName}"
+                                        TextColor="Black" />
+                                    <Label
+                                        FontSize="22"
+                                        Grid.Column="2"
+                                        Text="{Binding TotalPrice, StringFormat='€ {0:F2}'}"
+                                        TextColor="DarkGreen" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Frame>
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="24"
+                    HorizontalOptions="Start"
+                    Text="{Binding EuroPrice, StringFormat='Gesamtsumme: € {0:F2}'}"
+                    TextColor="Black" />
+
+                <Label
+                    FontSize="22"
+                    HorizontalOptions="Start"
+                    Text="{Binding SolanaRate, StringFormat='Aktueller Kurs: 1 SOL = €{0:F2}'}"
+                    TextColor="Gray" />
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="26"
+                    HorizontalOptions="Start"
+                    Text="{Binding TotalSol, StringFormat='Zu bezahlen: {0:F3} SOL'}"
+                    TextColor="DarkGreen" />
+            </VerticalStackLayout>
+
+            <!--  Right Column: QR Code  -->
+            <VerticalStackLayout
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                Padding="10"
+                Spacing="20"
+                VerticalOptions="Center">
+
+                <Label
+                    FontAttributes="Bold, Italic"
+                    FontSize="26"
+                    HorizontalOptions="Center"
+                    Text="Scannen zum Bezahlen" />
+
+                <Frame
+                    BackgroundColor="White"
+                    BorderColor="#888888"
+                    CornerRadius="10"
+                    HasShadow="True"
+                    HeightRequest="520"
+                    HorizontalOptions="Center"
+                    Padding="5"
+                    WidthRequest="520">
+
+                    <Image
+                        Aspect="AspectFit"
+                        BackgroundColor="LightGray"
+                        HeightRequest="500"
+                        Source="{Binding QrCodeImage}"
+                        WidthRequest="500" />
+                </Frame>
+
+                <Label
+                    FontSize="22"
+                    HorizontalOptions="Center"
+                    Text="{Binding ShortWalletAddress, StringFormat='Wallet: {0}'}"
+                    TextColor="Gray" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid
+            ColumnSpacing="10"
+            HorizontalOptions="Start"
+            Padding="20"
+            RowSpacing="0"
+            VerticalOptions="End">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Logo  -->
+            <Image
+                Grid.Column="0"
+                HeightRequest="90"
+                HorizontalOptions="Start"
+                Margin="20,0,0,0"
+                Source="waffle_moments_logo.png"
+                VerticalOptions="Center"
+                WidthRequest="90" />
+
+            <!--  Status Frame  -->
+            <Frame
+                BackgroundColor="White"
+                BorderColor="DarkGray"
+                CornerRadius="8"
+                Grid.Column="1"
+                IsVisible="{Binding IsWaitingForPayment}"
+                Padding="10,5">
+                <Label
+                    FontAttributes="Italic"
+                    FontSize="16"
+                    Text="Zahlung wird erwartet..."
+                    TextColor="IndianRed" />
+            </Frame>
+
+            <!--  Confirmed  -->
+            <Frame
+                BackgroundColor="White"
+                BorderColor="Green"
+                CornerRadius="8"
+                Grid.Column="1"
+                IsVisible="{Binding PaymentConfirmed}"
+                Padding="10,5">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    Text="Zahlung bestätigt!"
+                    TextColor="Green" />
+            </Frame>
+
+
+            <!--  Timed Out  -->
+            <Frame
+                BackgroundColor="White"
+                BorderColor="Red"
+                CornerRadius="8"
+                Grid.Column="1"
+                IsVisible="{Binding PaymentTimedOut}"
+                Padding="10,5">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    Text="Keine Zahlung empfangen."
+                    TextColor="Red" />
+            </Frame>
+
+        </Grid>
+    </Grid>
+</ContentPage>

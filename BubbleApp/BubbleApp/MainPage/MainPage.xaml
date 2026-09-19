@@ -1,0 +1,183 @@
+﻿<ContentPage
+    BackgroundColor="Wheat"
+    Title="Waffle Moments"
+    x:Class="BubbleAppNew.MainPage.MainPage"
+    x:DataType="mainPage:BubbleWaffleViewModel"
+    x:Name="RootPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bubbleLib="clr-namespace:BubbleLib;assembly=BubbleLib"
+    xmlns:mainPage="clr-namespace:BubbleAppNew.MainPage"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Grid Padding="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.2*" />
+            <!--  Left Waffle Menu  -->
+            <ColumnDefinition Width="2.8*" />
+            <!--  Right Order Summary  -->
+        </Grid.ColumnDefinitions>
+
+        <!--  LEFT SIDE: Waffle Menu  -->
+        <VerticalStackLayout
+            Grid.Column="0"
+            Margin="0,4"
+            Spacing="10">
+            <Button
+                BackgroundColor="PaleVioletRed"
+                Clicked="OnCreateMomentClicked"
+                CornerRadius="18"
+                FontAttributes="Bold"
+                FontSize="20"
+                HorizontalOptions="Center"
+                Padding="12,6"
+                Text="Create Your Own Moment"
+                TextColor="White" />
+
+            <CollectionView ItemsSource="{Binding WaffleMenu}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="bubbleLib:BubbleWaffle">
+                        <Grid
+                            ColumnDefinitions="Auto, *, Auto"
+                            HorizontalOptions="Center"
+                            Margin="10,4"
+                            Padding="6"
+                            VerticalOptions="Center"
+                            WidthRequest="350">
+
+
+                            <Button
+                                BackgroundColor="#8B0000"
+                                Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.RemoveWaffleFromOrderCommand}"
+                                CommandParameter="{Binding}"
+                                CornerRadius="18"
+                                FontAttributes="Bold"
+                                FontSize="24"
+                                Grid.Column="0"
+                                HeightRequest="48"
+                                Text="-"
+                                TextColor="White"
+                                VerticalOptions="Center"
+                                WidthRequest="48" />
+
+                            <Label
+                                FontSize="20"
+                                Grid.Column="1"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                Text="{Binding WaffleName}"
+                                TextColor="Black"
+                                VerticalOptions="Center" />
+
+                            <Button
+                                BackgroundColor="SeaGreen"
+                                Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.AddWaffleToOrderCommand}"
+                                CommandParameter="{Binding}"
+                                CornerRadius="18"
+                                FontAttributes="Bold"
+                                FontSize="24"
+                                Grid.Column="2"
+                                HeightRequest="48"
+                                Text="+"
+                                TextColor="White"
+                                VerticalOptions="Center"
+                                WidthRequest="48" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
+        <!--  RIGHT SIDE: Order Summary  -->
+        <Border
+            BackgroundColor="White"
+            Grid.Column="1"
+            HorizontalOptions="Fill"
+            Margin="20,0,0,0"
+            Padding="20"
+            Stroke="Gray"
+            StrokeThickness="2"
+            VerticalOptions="Fill">
+
+            <VerticalStackLayout Spacing="15">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    Text="Bestellung"
+                    TextColor="Black" />
+
+                <CollectionView ItemsSource="{Binding OrderedItems}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="bubbleLib:BubbleWaffle">
+                            <Grid
+                                ColumnDefinitions="50, 2*, 1*, 1*"
+                                Margin="0,3"
+                                Padding="2">
+
+                                <Button
+                                    BackgroundColor="IndianRed"
+                                    Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.RemoveWaffleFromOrderCommand}"
+                                    CommandParameter="{Binding}"
+                                    CornerRadius="22"
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Margin="0,0,5,0"
+                                    Padding="0"
+                                    Text="-"
+                                    TextColor="GhostWhite"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    FontSize="20"
+                                    Grid.Column="1"
+                                    Text="{Binding WaffleName}"
+                                    TextColor="Black"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    FontSize="20"
+                                    Grid.Column="2"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{Binding Quantity}"
+                                    TextColor="Black"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    FontSize="20"
+                                    Grid.Column="3"
+                                    HorizontalTextAlignment="End"
+                                    Text="{Binding TotalPrice, StringFormat='€ {0:F2}'}"
+                                    TextColor="Black"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="{Binding TotalPrice, StringFormat='Gesamtsumme: € {0:F2}'}"
+                    TextColor="Black" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="{Binding SolanaPrice, StringFormat='Solana Wert: {0:F3} SOL'}"
+                    TextColor="DarkGreen" />
+                <Button
+                    BackgroundColor="DarkRed"
+                    Command="{Binding GenerateQrCodeCommand}"
+                    CornerRadius="10"
+                    FontSize="18"
+                    Padding="12,6"
+                    Text="Create QR Code"
+                    TextColor="White" />
+
+
+                <Label
+                    FontSize="14"
+                    HorizontalTextAlignment="Center"
+                    Text="Powered by CoinGecko API"
+                    TextColor="YellowGreen"
+                    VerticalTextAlignment="End" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+
+</ContentPage>
