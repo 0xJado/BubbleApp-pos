@@ -1,6 +1,6 @@
-# Blockchain
+# BubbleApp-pos
 
-A collection of Web3 projects and experiments.
+A .NET MAUI point-of-sale demo for bubble-waffle orders and Solana Devnet payments.
 
 ## BubbleApp
 
@@ -27,3 +27,11 @@ This is an archived learning project. The latest local build check stopped durin
 No SMTP credentials are included. Configure `BUBBLEAPP_SMTP_USERNAME` and `BUBBLEAPP_SMTP_PASSWORD` in the environment before starting the app, or supply credentials through the `EmailService` constructor. Receipt sending fails with a configuration error when credentials are missing. Never commit real credentials. Unit tests use dummy credentials and a mocked SMTP client.
 
 The Solana RPC client is configured for Devnet. This project is a demonstration, not a production payment system.
+
+### Restored project history
+
+The original project history contains 61 commits from 21 March to 14 June 2025. It was extracted from the apprenticeship repository and joined to the existing GitHub import without replacing its commits. Only the project subtree was retained; unrelated training material was excluded.
+
+Original authors, commit dates, and messages were preserved. Historical commit IDs changed because paths were reorganized and excluded files were removed. The original email service and email test revisions were omitted; the current email implementation and tests use configurable or dummy credentials.
+
+Presentations, PDF-generation scripts, and documentation template assets remain local and are excluded from version control. The original German project report and documentation already included in this repository remain available.

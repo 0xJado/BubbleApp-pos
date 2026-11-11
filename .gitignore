@@ -23,3 +23,9 @@ TestResults/
 *.db3
 *.sqlite
 *.sqlite3
+
+# Local presentations and documentation tooling
+**/Presentation/
+**/Presentations/
+**/Dokumentation/generate_pdf.sh
+**/Dokumentation/kiroku/
