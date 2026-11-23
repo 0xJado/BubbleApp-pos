@@ -40,6 +40,11 @@ public class OrderStorageService : IOrderStorageService
 {
     private readonly SQLiteAsyncConnection _database;
 
+    static OrderStorageService()
+    {
+        SQLitePCL.Batteries_V2.Init();
+    }
+
     /// <summary>
     /// Initializes the <see cref="OrderStorageService"/> with a database path and ensures the required table exists.
     /// </summary>

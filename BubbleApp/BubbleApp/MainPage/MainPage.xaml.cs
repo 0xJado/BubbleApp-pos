@@ -1,6 +1,5 @@
 ﻿using BubbleAppNew.CreatedMomentPage;
-using BubbleLib;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 
 namespace BubbleAppNew.MainPage;
 
@@ -15,7 +14,7 @@ public partial class MainPage
         BindingContext = _vm;
     }
 
-    private void OnCreateMomentClicked(object sender, EventArgs e)
+    private async void OnCreateMomentClicked(object sender, EventArgs e)
     {
         var popup = new CreateMomentPopup();
 
@@ -24,6 +23,6 @@ public partial class MainPage
             _vm.AddWaffleToOrder(customOrder);
         };
 
-        this.ShowPopup(popup);
+        await this.ShowPopupAsync(popup);
     }
 }

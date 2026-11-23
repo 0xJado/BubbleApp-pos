@@ -158,7 +158,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
                 pendingOrder.Status = PaymentStatus.Confirmed;
                 await _orderStorageService.UpdateOrderStatusAsync(OrderId, txSignature, PaymentStatus.Confirmed);
 
-                bool wantsEmail = await Shell.Current.DisplayAlert(
+                bool wantsEmail = await Shell.Current.DisplayAlertAsync(
                     "Zahlung erfolgreich",
                     "Möchten Sie eine Quittung per E-Mail erhalten?",
                     "Ja", "Nein");

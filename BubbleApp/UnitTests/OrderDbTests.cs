@@ -13,12 +13,10 @@ public class OrderStorageServiceTests
     [SetUp]
     public void Setup()
     { 
-        // Use in-memory database for test isolation
-        _connection = new SQLiteAsyncConnection(":memory:");
-        _connection.CreateTableAsync<CompletedOrder>().Wait();
-        _connection.DeleteAllAsync<CompletedOrder>().Wait(); // Ensures order table is clear between tests
-
+        // The service initializes SQLite and creates the in-memory order table.
         _orderStorageService = new OrderStorageService(":memory:");
+        _connection = new SQLiteAsyncConnection(":memory:");
+        _connection.DeleteAllAsync<CompletedOrder>().Wait(); // Ensures order table is clear between tests
     }
     
     [Test]
