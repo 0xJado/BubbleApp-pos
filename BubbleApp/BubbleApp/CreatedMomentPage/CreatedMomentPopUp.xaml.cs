@@ -12,7 +12,7 @@ public partial class CreateMomentPopup : Popup
         InitializeComponent();
     }
 
-    private void OnAddClicked(object sender, EventArgs e)
+    private async void OnAddClicked(object sender, EventArgs e)
     {
         var name = NameEntry.Text?.Trim();
         var priceText = PriceEntry.Text?.Trim();
@@ -30,6 +30,6 @@ public partial class CreateMomentPopup : Popup
         };
 
         MomentCreated?.Invoke(customItem);
-        Close();
+        await CloseAsync();
     }
 }

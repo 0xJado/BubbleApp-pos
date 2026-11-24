@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net11.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
@@ -9,12 +9,12 @@
     <ItemGroup>
       <PackageReference Include="CoinGecko.Net" Version="3.4.0" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-      <PackageReference Include="MailKit" Version="4.11.0" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3" />
-      <PackageReference Include="Microsoft.Maui.Controls.Core" Version="8.0.100" />
-      <PackageReference Include="QRCoder-ImageSharp" Version="0.10.0" />
-      <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-      <PackageReference Include="System.Net.Http.Json" Version="9.0.3" />
+      <PackageReference Include="MailKit" Version="4.18.2" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
+      <PackageReference Include="Microsoft.Maui.Controls.Core" Version="$(BubbleMauiVersion)" />
+      <PackageReference Include="QRCoder" Version="1.8.0" />
+      <PackageReference Include="sqlite-net-base" Version="1.9.172" />
+      <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
     </ItemGroup>
 
 </Project>

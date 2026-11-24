@@ -4,7 +4,7 @@ A .NET MAUI point-of-sale demo for bubble-waffle orders and Solana Devnet paymen
 
 ## BubbleApp
 
-[BubbleApp](BubbleApp/) is an apprenticeship project built with .NET 8 and .NET MAUI: a waffle-ordering app with Solana Devnet payment tracking, QR codes, order history, and email receipts.
+[BubbleApp](BubbleApp/) is an apprenticeship project now targeting .NET 11 and .NET MAUI 11: a waffle-ordering app with Solana Devnet payment tracking, QR codes, order history, and email receipts.
 
 - Solution: `BubbleApp/BubbleApp.sln`
 - MAUI application: `BubbleApp/BubbleApp/`
@@ -14,13 +14,17 @@ A .NET MAUI point-of-sale demo for bubble-waffle orders and Solana Devnet paymen
 
 ### Building
 
-Use a compatible .NET 8 SDK and MAUI workloads for the target platform. Open `BubbleApp/BubbleApp.sln` in an IDE configured for MAUI, or build the Windows target from the repository root:
+Install the .NET 11 SDK (11.0.100 or a later patch in that feature band). The repository pins MAUI 11.0.10 and workload set 11.0.100.1. From the repository root:
 
-```powershell
-dotnet build BubbleApp/BubbleApp/BubbleApp.csproj -p:TargetFrameworks=net8.0-windows10.0.19041.0
+```sh
+dotnet workload restore BubbleApp/BubbleApp/BubbleApp.csproj
+dotnet build BubbleApp/BubbleApp/BubbleApp.csproj -f net11.0-android
+dotnet test BubbleApp/UnitTests/UnitTests.csproj
 ```
 
-This is an archived learning project. The latest local build check stopped during package restore because the available SDK lacked MAUI support; successful compilation has not yet been verified in its new location. Restore also reported a moderate security advisory for MailKit 4.11.0. Review dependencies before using the app beyond a demo.
+Android builds require JDK 21 and Android SDK API 37. On macOS, the app also targets iOS and Mac Catalyst, which require Xcode 27.2 with the pinned workload. On Windows, use `-f net11.0-windows10.0.19041.0` to build the Windows target. The minimum device versions are Android 7 (API 24), iOS 15, macOS 14 for Mac Catalyst, and Windows 10 version 1809.
+
+To restore and build only the Android target on a host without the other platform workloads, pass `-p:BubbleAppTargetFramework=net11.0-android` to the app build command.
 
 ### Email configuration
 
