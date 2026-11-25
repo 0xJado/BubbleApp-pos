@@ -11,13 +11,15 @@
     <CollectionView ItemsSource="{Binding Orders}">
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="bubbleLib:CompletedOrder">
-                <Frame
+                <Border
                     BackgroundColor="White"
-                    BorderColor="Gray"
-                    CornerRadius="8"
-                    HasShadow="True"
+                    Stroke="Gray"
+                    StrokeShape="RoundRectangle 8"
                     Margin="10"
                     Padding="10">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.35" />
+                    </Border.Shadow>
                     <Grid ColumnDefinitions="*, Auto">
                         <!--  Left Side: Order Details  -->
                         <VerticalStackLayout Grid.Column="0" Spacing="5">
@@ -72,7 +74,7 @@
                             </Label>
                         </VerticalStackLayout>
                     </Grid>
-                </Frame>
+                </Border>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

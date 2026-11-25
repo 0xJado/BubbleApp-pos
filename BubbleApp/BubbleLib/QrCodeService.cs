@@ -15,7 +15,7 @@ public interface IQrCodeService
     /// </summary>
     /// <param name="payload">The string content to encode in the QR code.</param>
     /// <returns>An <see cref="ImageSource"/> containing the generated QR code image, or null if generation fails.</returns>
-    ImageSource GenerateQrCode(string payload);
+    ImageSource? GenerateQrCode(string? payload);
 }
 
 /// <summary>
@@ -28,8 +28,11 @@ public class QrCodeService : IQrCodeService
     /// </summary>
     /// <param name="payload">The text to encode in the QR code.</param>
     /// <returns>An image source containing the QR code, or null if an error occurs during generation.</returns>
-    public ImageSource GenerateQrCode(string payload)
+    public ImageSource? GenerateQrCode(string? payload)
     {
+        if (string.IsNullOrWhiteSpace(payload))
+            return null;
+
         try
         {
             using var qrGenerator = new QRCodeGenerator();

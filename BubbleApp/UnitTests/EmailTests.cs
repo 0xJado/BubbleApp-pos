@@ -39,8 +39,9 @@ public class EmailServiceTests
 
         // Assert
         _smtpMock.Verify(s => s.SendAsync(It.Is<MimeMessage>(msg =>
+            msg.Subject != null &&
             msg.Subject.Contains("Quittung") &&
-            msg.To.Mailboxes.First().Address == "test@example.com"
+            msg.To.Mailboxes.Select(mailbox => mailbox.Address).FirstOrDefault() == "test@example.com"
         )), Times.Once);
     }
 }

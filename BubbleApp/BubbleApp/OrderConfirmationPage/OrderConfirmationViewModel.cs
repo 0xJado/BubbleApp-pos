@@ -25,8 +25,7 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShortWalletAddress))]
     private string _storeWalletAddress;
 
-    [ObservableProperty] private ImageSource _qrCodeImage;
-    [ObservableProperty] private string _emailAddress;
+    [ObservableProperty] private ImageSource? _qrCodeImage;
 
     /// <summary>
     /// Gets the total price in Solana based on the Euro amount and the current SOL exchange rate.
@@ -90,7 +89,6 @@ public partial class OrderConfirmationViewModel : ObservableObject, IQueryAttrib
     private async Task NewTransactionAsync()
     {
         _waffleService.ClearOrder();
-        EmailAddress = string.Empty;
         await Shell.Current.GoToAsync("..");
     }
 

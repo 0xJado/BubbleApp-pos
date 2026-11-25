@@ -15,7 +15,7 @@ namespace BubbleAppNew.OrderHistory
         /// Collection of completed orders that is bound to the UI.
         /// </summary>
         [ObservableProperty] 
-        private ObservableCollection<CompletedOrder> _orders;
+        private ObservableCollection<CompletedOrder> _orders = new();
 
         /// <summary>
         /// Flag indicating whether the order data is currently being refreshed.
@@ -25,14 +25,12 @@ namespace BubbleAppNew.OrderHistory
         private bool _isRefreshing;
 
         /// <summary>
-        /// Constructor that initializes the viewmodel and triggers the loading of order data.
+        /// Constructor that initializes the view model.
         /// </summary>
         /// <param name="orderStorageService">Service for retrieving stored order data.</param>
         public OrderHistoryViewModel(IOrderStorageService orderStorageService)
         {
             _orderStorageService = orderStorageService;
-            Orders = new ObservableCollection<CompletedOrder>();
-            LoadOrdersAsync();
         }
 
         /// <summary>

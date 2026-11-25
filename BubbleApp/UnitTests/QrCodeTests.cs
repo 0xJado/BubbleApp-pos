@@ -26,7 +26,7 @@ public class QrCodeTests
     [Test]
     public void InvalidQrCodePayload()
     { 
-        string payload = null;
+        string? payload = null;
         var result = _qrCodeService.GenerateQrCode(payload);
 
         Assert.That(result, Is.Null);

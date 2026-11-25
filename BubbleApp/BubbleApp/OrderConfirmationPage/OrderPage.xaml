@@ -42,12 +42,14 @@
                     Text="{Binding OrderId, StringFormat='Order ID: {0}'}"
                     TextColor="Gray" />
 
-                <Frame
+                <Border
                     BackgroundColor="White"
-                    BorderColor="#CCCCCC"
-                    CornerRadius="12"
-                    HasShadow="True"
+                    Stroke="#CCCCCC"
+                    StrokeShape="RoundRectangle 12"
                     Padding="10">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.35" />
+                    </Border.Shadow>
 
                     <CollectionView HeightRequest="300" ItemsSource="{Binding OrderedItems}">
                         <CollectionView.ItemTemplate>
@@ -73,7 +75,7 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                </Frame>
+                </Border>
 
                 <Label
                     FontAttributes="Bold"
@@ -110,15 +112,17 @@
                     HorizontalOptions="Center"
                     Text="Scannen zum Bezahlen" />
 
-                <Frame
+                <Border
                     BackgroundColor="White"
-                    BorderColor="#888888"
-                    CornerRadius="10"
-                    HasShadow="True"
+                    Stroke="#888888"
+                    StrokeShape="RoundRectangle 10"
                     HeightRequest="520"
                     HorizontalOptions="Center"
                     Padding="5"
                     WidthRequest="520">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.35" />
+                    </Border.Shadow>
 
                     <Image
                         Aspect="AspectFit"
@@ -126,7 +130,7 @@
                         HeightRequest="500"
                         Source="{Binding QrCodeImage}"
                         WidthRequest="500" />
-                </Frame>
+                </Border>
 
                 <Label
                     FontSize="22"
@@ -157,11 +161,11 @@
                 VerticalOptions="Center"
                 WidthRequest="90" />
 
-            <!--  Status Frame  -->
-            <Frame
+            <!--  Payment status  -->
+            <Border
                 BackgroundColor="White"
-                BorderColor="DarkGray"
-                CornerRadius="8"
+                Stroke="DarkGray"
+                StrokeShape="RoundRectangle 8"
                 Grid.Column="1"
                 IsVisible="{Binding IsWaitingForPayment}"
                 Padding="10,5">
@@ -170,13 +174,13 @@
                     FontSize="16"
                     Text="Zahlung wird erwartet..."
                     TextColor="IndianRed" />
-            </Frame>
+            </Border>
 
             <!--  Confirmed  -->
-            <Frame
+            <Border
                 BackgroundColor="White"
-                BorderColor="Green"
-                CornerRadius="8"
+                Stroke="Green"
+                StrokeShape="RoundRectangle 8"
                 Grid.Column="1"
                 IsVisible="{Binding PaymentConfirmed}"
                 Padding="10,5">
@@ -185,14 +189,14 @@
                     FontSize="20"
                     Text="Zahlung bestätigt!"
                     TextColor="Green" />
-            </Frame>
+            </Border>
 
 
             <!--  Timed Out  -->
-            <Frame
+            <Border
                 BackgroundColor="White"
-                BorderColor="Red"
-                CornerRadius="8"
+                Stroke="Red"
+                StrokeShape="RoundRectangle 8"
                 Grid.Column="1"
                 IsVisible="{Binding PaymentTimedOut}"
                 Padding="10,5">
@@ -201,7 +205,7 @@
                     FontSize="20"
                     Text="Keine Zahlung empfangen."
                     TextColor="Red" />
-            </Frame>
+            </Border>
 
         </Grid>
     </Grid>

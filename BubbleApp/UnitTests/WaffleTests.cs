@@ -6,7 +6,6 @@ namespace UnitTests;
 public class WaffleServiceTests
 {
     private IWaffleService _waffleService;
-    private BubbleWaffle bubble;
 
     [SetUp]
     public void Setup()

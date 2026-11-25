@@ -59,31 +59,30 @@ public partial class BubbleWaffleViewModel : ObservableObject
         _orderStorageService = orderStorageService ?? throw new ArgumentNullException(nameof(orderStorageService));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         _txnTracker = txnTracker ?? throw new ArgumentNullException(nameof(txnTracker));
-        
-        UpdatePricesAsync();
+
     }
 
     /// <summary>
     /// Adds a waffle item to the current order and updates the displayed prices.
     /// </summary>
     /// <param name="waffle">The waffle item to add.</param>
-    [RelayCommand]
-    public void AddWaffleToOrder(BubbleWaffle waffle)
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    public async Task AddWaffleToOrderAsync(BubbleWaffle waffle)
     {
         _waffleService.AddWaffleToOrder(waffle);
-        UpdatePricesAsync();
+        await UpdatePricesAsync();
     }
 
     /// <summary>
     /// Removes a waffle item from the current order and updates the displayed prices.
     /// </summary>
     /// <param name="waffle">The waffle item to remove.</param>
-    [RelayCommand]
-    private void RemoveWaffleFromOrder(BubbleWaffle? waffle)
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private async Task RemoveWaffleFromOrderAsync(BubbleWaffle? waffle)
     {
         if (waffle == null) return;
         _waffleService.RemoveWaffleFromOrder(waffle);
-        UpdatePricesAsync();
+        await UpdatePricesAsync();
     }
 
     /// <summary>
@@ -92,8 +91,22 @@ public partial class BubbleWaffleViewModel : ObservableObject
     private async Task UpdatePricesAsync()
     {
         TotalPrice = _waffleService.GetTotalPrice();
-        var solanaRate = await _coinGeckoService.GetSolanaEuroExchangeRateAsync();
-        SolanaPrice = TotalPrice / solanaRate;
+        if (TotalPrice == 0)
+        {
+            SolanaPrice = 0;
+            return;
+        }
+
+        try
+        {
+            var solanaRate = await _coinGeckoService.GetSolanaEuroExchangeRateAsync();
+            SolanaPrice = solanaRate > 0 ? TotalPrice / solanaRate : 0;
+        }
+        catch (InvalidOperationException ex)
+        {
+            SolanaPrice = 0;
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>

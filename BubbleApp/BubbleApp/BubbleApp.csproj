@@ -5,7 +5,6 @@
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">$(TargetFrameworks);net11.0-ios;net11.0-maccatalyst</TargetFrameworks>
         <NullabilityInfoContextSupport>true</NullabilityInfoContextSupport>
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
 
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net11.0-windows10.0.19041.0</TargetFrameworks>
@@ -41,6 +40,11 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <!-- Keep Android debug APKs runnable when installed outside IDE fast deployment. -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+        <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     </PropertyGroup>
 
     <ItemGroup>
