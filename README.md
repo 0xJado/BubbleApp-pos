@@ -2,6 +2,8 @@
 
 A .NET MAUI point-of-sale demo for bubble-waffle orders and Solana Devnet payments.
 
+See the [BubbleApp v2 roadmap](ROADMAP.md) for the planned redesign, menu management, and payment options.
+
 ## BubbleApp
 
 [BubbleApp](BubbleApp/) is an apprenticeship project now targeting .NET 11 and .NET MAUI 11: a waffle-ordering app with Solana Devnet payment tracking, QR codes, order history, and email receipts.
